@@ -1,0 +1,10 @@
+base
+knitr
+dplyr
+stringr
+tidyr
+rCharts
+readr
+reshape2
+ggplot2
+cowplot

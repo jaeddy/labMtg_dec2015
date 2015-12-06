@@ -1,0 +1,516 @@
+---
+title       : TCR-seq Pipeline Development
+subtitle    : Getting to know MiXCR a little better
+author      : James Eddy
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [d3_sankey]
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+`r opts_chunk$set(echo=FALSE, message=FALSE, comment="")`
+
+```{r load_libs, cache=FALSE}
+library(knitr)
+library(readr)
+library(reshape2)
+library(ggplot2)
+library(cowplot)
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(rCharts)
+```
+
+## From single cells to clonotypes
+
+Some words and stuff!
+
+<div style='text-align: center;'>
+    <img height='400' src='images/tcrseq.png' />
+</div>
+
+
+--- .class #id 
+`r opts_knit$set(root.dir = "/Users/jaeddy/code/github/projects/tcrSeqAnalysis/")`
+
+## Case 1: P85 MAIT
+
+--- 
+
+## Reading & formatting MiXCR outputs
+
+```{r, cache=FALSE}
+source("R/prep_junctions.R")
+```
+
+```{r}
+mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_MM/"
+project <- "P85"
+out_folder <- mixcr_folder
+
+# Combine MiXCR junctions into a single file
+mixcr_file <- combine_mixcr_outputs(mixcr_folder, out_folder, project)
+```
+
+```{r echo=TRUE}
+# Read, format, and filter MiXCR junctions
+mixcr <- format_mixcr_jxns(mixcr_file) %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+```
+
+```{r}
+head(mixcr$jxns) %>% 
+    kable(format = "html")
+```
+
+--- 
+
+## Inspecting MiXCR junctions
+
+```{r, cache=FALSE}
+source("R/plot_junction_stats.R")
+p1 <- plot_mixcr_jxn_dist(mixcr$jxns, cutoff_line = 20)
+p2 <- plot_mixcr_summary(mixcr$jxns)
+plot_grid(p1, p2, nrow = 2)
+```
+
+--- 
+
+## Reading & formatting IMGT outputs
+
+```{r echo=TRUE}
+# Read and filter IMGT junctions
+imgt_file <- "data/P85/P85_MAIT/complied_P85_Prilic_1_and_2_productive_trimmed_unique.txt"
+
+imgt <- format_imgt_jxns(imgt_file) %>% 
+    filter_imgt_jxns() %>% 
+    filter(!str_detect(lib_id, "lib2.*")) %>% 
+    list(jxns = .)
+```
+
+```{r}
+head(imgt$jxns) %>% 
+    kable(format = "html")
+```
+
+--- 
+
+## Comparing IMGT & MiXCR
+
+```{r}
+p1 <- compare_jxn_dists(imgt$jxns, mixcr$jxns) %>% 
+    plot_jxn_comp()
+p1
+```
+
+--- 
+
+## Checking for user variability
+
+```{r}
+mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_JE"
+project <- "P85"
+out_folder <- mixcr_folder
+
+# Combine MiXCR junctions into a single file; read, format, and filter junctions
+mixcr_je <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+
+p2 <- compare_jxn_dists(imgt$jxns, mixcr_je$jxns) %>% 
+    plot_jxn_comp()
+plot_grid(p1, p2, labels = c("Processing & MiXCR execution by Mike",
+                             "Processing by Mike, MiXCR execution by James"))
+```
+
+--- 
+
+## Investigating the effect of RNA-seq parameters
+
+Bonus function: `compile_imgt_output()`
+
+```{r}
+project <- "P85"
+
+# Read and format IMGT outputs
+
+# 1) 100bp reads
+summary_file <- "data/P85/P85_100/imgtOutput/1_Summary.txt"
+out_folder <- dirname(summary_file)
+        
+# Compile and format IMGT junctions; read and filter junctions
+p85_100_imgt <- 
+    compile_imgt_output(summary_file, out_folder, project) %>% 
+    format_imgt_jxns() %>% 
+    filter_imgt_jxns() %>% 
+    list(jxns = .)
+
+# 1) 58bp reads
+summary_file <- "data/P85/P85_58/imgtOutput/1_Summary.txt"
+out_folder <- dirname(summary_file)
+        
+# Compile and format IMGT junctions; read and filter junctions
+p85_58_imgt <- 
+    compile_imgt_output(summary_file, out_folder, project) %>% 
+    format_imgt_jxns() %>% 
+    filter_imgt_jxns() %>% 
+    list(jxns = .)
+```
+
+```{r}
+# Read and format MiXCR outputs
+
+# 1) 100 bp reads, duplicates removed
+mixcr_folder <- "data/P85/P85_100/mixcrOutput_rmDups/"
+out_folder <- mixcr_folder
+
+# combine MiXCR junctions into single file; read, format, and filter junctions
+p85_100_mixcr <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+
+# 2) 58 bp reads, duplicates removed
+mixcr_folder <- "data/P85/P85_58/mixcrOutput_rmDups/"
+out_folder <- mixcr_folder
+
+# combine MiXCR junctions into single file; read, format, and filter junctions
+p85_58_mixcr <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+
+# 3) 100 bp reads, keep duplicates
+mixcr_folder <- "data/P85/P85_100/mixcrOutput_keepDups/"
+out_folder <- mixcr_folder
+
+# combine MiXCR junctions into single file; read, format, and filter junctions
+p85_100_mixcr_dups <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+
+# 4) 58 bp reads, keep duplicates
+mixcr_folder <- "data/P85/P85_58/mixcrOutput_keepDups/"
+out_folder <- mixcr_folder
+
+# combine MiXCR junctions into single file; read, format, and filter junctions
+p85_58_mixcr_dups <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+```
+
+--- 
+
+## Plotting the results
+
+```{r}
+p1 <- compare_jxn_dists(p85_100_imgt$jxns, p85_100_mixcr$jxns) %>% 
+    plot_jxn_comp()
+p2 <- compare_jxn_dists(p85_100_imgt$jxns, p85_100_mixcr_dups$jxns) %>% 
+    plot_jxn_comp()
+
+p3 <- compare_jxn_dists(p85_58_imgt$jxns, p85_58_mixcr$jxns) %>% 
+    plot_jxn_comp()
+p4 <- compare_jxn_dists(p85_58_imgt$jxns, p85_58_mixcr_dups$jxns) %>% 
+    plot_jxn_comp()
+plot_grid(p1, p2, p3, p4,
+          labels = c("100bp, dups removed",
+                     "100bp, keep dups",
+                     "58bp, dups removed",
+                     "58bp, keep dups"))
+```
+
+---
+
+## Case 2: P91
+
+---
+
+## MiXCR (with short reads) vs. IMGT
+
+```{r, cache=FALSE}
+project <- "P91-11"
+
+summary_file <- "data/P91/P91_11_1_Summary.txt"
+out_folder <- dirname(summary_file)
+        
+# Compile and format IMGT junctions; read and filter junctions
+p91_imgt <- 
+    compile_imgt_output(summary_file, out_folder, project) %>% 
+    format_imgt_jxns() %>% 
+    filter_imgt_jxns() %>% 
+    list(jxns = .)
+
+mixcr_folder <- "data/P91_new/P91-11/mixcrOutput_trimFqs/"
+project <- "P91-11"
+out_folder <- mixcr_folder
+
+# Combine MiXCR junctions into a single file; read, format, and filter junctions
+p91_mixcr <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns(min_count = 10) %>% 
+    list(jxns = .)
+```
+
+```{r, cache=FALSE}
+source("R/inspect_tcrs.R")
+```
+
+---
+
+## Constructing & inspecting TCRs
+
+```{r echo=TRUE, cache=FALSE}
+# Combine TRAV and TRBV junctions to construct TCRs
+p91_imgt[["tcrs"]] <- p91_imgt$jxns %>% 
+    construct_tcrs()
+```
+
+```{r}
+head(p91_imgt$tcrs) %>% 
+    kable(format = "html")
+```
+
+---
+
+## Constructing TCRs with MiXCR - selecting junctions 
+
+```{r echo=TRUE, cache=FALSE}
+p91_mixcr[["tcrs"]] <- p91_mixcr$jxns %>% 
+    select_top_jxns() %>% 
+    construct_tcrs()
+```
+
+```{r}
+head(p91_mixcr$tcrs) %>% 
+    kable(format = "html")
+```
+
+---
+
+## Visualizing TCRs with Sankey diagrams
+
+```{r echo=TRUE, cache=FALSE}
+# setwd("/Users/jaeddy/code/github/presentations/labMtg_dec2015/")
+# Combine IMGT and MiXCR TCRs
+imgt_mixcr <- p91_imgt$tcrs %>% 
+    mutate(tcr_source = "IMGT") %>% 
+    bind_rows(p91_mixcr$tcrs %>% 
+                  mutate(tcr_source = "MiXCR")) %>% 
+    list(tcrs = .)
+
+# Construct and display a sankey network linking libs to genes to junctions
+imgt_mixcr[["plot"]] <- 
+    build_sankey_network(imgt_mixcr$tcrs, 
+                         chain = "both") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+---
+
+## Sankey again...
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+imgt_mixcr$plot$show('inline', include_assets = FALSE)
+```
+
+--- 
+
+## B chain only
+
+```{r, cache=FALSE}
+# Construct and display a sankey network linking libs to genes to junctions
+imgt_mixcr[["plot_b"]] <- 
+    build_sankey_network(imgt_mixcr$tcrs, 
+                         chain = "B") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+ 
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+imgt_mixcr$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
+```
+
+--- 
+
+## Differences only
+
+```{r, cache=FALSE}
+imgt_mixcr_diff <- p91_imgt$tcrs %>% 
+    anti_join(p91_mixcr$tcrs) %>% 
+    mutate(tcr_source = "IMGT") %>% 
+    bind_rows(p91_mixcr$tcrs %>%
+                  anti_join(p91_imgt$tcrs) %>% 
+                  mutate(tcr_source = "MiXCR")) %>% 
+    list(tcrs = .)
+
+imgt_mixcr_diff[["plot"]] <- 
+    build_sankey_network(imgt_mixcr_diff$tcrs, 
+                         chain = "B") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+imgt_mixcr_diff$plot$show('inline', cdn = TRUE, include_assets = FALSE)
+```
+
+--- 
+
+## MiXCR with Trinity
+
+```{r, cache=FALSE}
+mixcr_folder <- "data/P91_new/P91-11/mixcrOutput_trinity/"
+project <- "P91-11"
+out_folder <- mixcr_folder
+
+# Combine MiXCR junctions into a single file; read, format, and filter junctions
+p91_mixcr_trinity <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+```
+
+```{r echo=TRUE, cache=FALSE}
+p91_mixcr_trinity[["tcrs"]] <- p91_mixcr_trinity$jxns %>% 
+    select_top_jxns() %>% 
+    construct_tcrs()
+```
+
+--- 
+
+## How'd we do?
+
+```{r, cache=FALSE}
+# Combine IMGT and MiXCR TCRs
+imgt_mixcr_trinity <- p91_imgt$tcrs %>% 
+    mutate(tcr_source = "IMGT") %>% 
+    bind_rows(p91_mixcr_trinity$tcrs %>% 
+                  mutate(tcr_source = "MiXCR")) %>% 
+    list(tcrs = .)
+
+# Construct and display a sankey network linking libs to genes to junctions
+imgt_mixcr_trinity[["plot_b"]] <- 
+    build_sankey_network(imgt_mixcr_trinity$tcrs, 
+                         chain = "B") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
+```
+
+--- 
+
+## Checking all
+
+```{r, cache=FALSE}
+# Construct and display a sankey network linking libs to genes to junctions
+imgt_mixcr_trinity[["plot"]] <- 
+    build_sankey_network(imgt_mixcr_trinity$tcrs, 
+                         chain = "both") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+imgt_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
+```
+
+---
+
+## Case 3: P48
+
+```{r, cache=FALSE}
+project <- "P48"
+
+mixcr_folder <- "data/P48/mixcrOutput_trimFq/"
+out_folder <- dirname(summary_file)
+        
+# Combine MiXCR junctions into a single file; read, format, and filter junctions
+p48_mixcr <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns(min_count = 10) %>% 
+    list(jxns = .)
+
+mixcr_folder <- "data/P48/mixcrOutput_trinity/"
+project <- "P48"
+out_folder <- mixcr_folder
+
+# Combine MiXCR junctions into a single file; read, format, and filter junctions
+p48_mixcr_trinity <- 
+    combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
+    format_mixcr_jxns() %>% 
+    filter_mixcr_jxns() %>% 
+    list(jxns = .)
+
+p48_mixcr[["tcrs"]] <- p48_mixcr$jxns %>% 
+    select_top_jxns() %>% 
+    construct_tcrs()
+
+p48_mixcr_trinity[["tcrs"]] <- p48_mixcr_trinity$jxns %>% 
+    select_top_jxns() %>% 
+    construct_tcrs()
+```
+
+```{r, cache=FALSE}
+# Combine IMGT and MiXCR TCRs
+mixcr_mixcr_trinity <- p48_mixcr$tcrs %>% 
+    mutate(tcr_source = "IMGT") %>% 
+    bind_rows(p48_mixcr_trinity$tcrs %>% 
+                  mutate(tcr_source = "MiXCR")) %>% 
+    list(tcrs = .)
+
+# Construct and display a sankey network linking libs to genes to junctions
+mixcr_mixcr_trinity[["plot"]] <- 
+    build_sankey_network(mixcr_mixcr_trinity$tcrs, 
+                         chain = "both") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
+```
+
+--- 
+
+## Allowing multiple TRAV
+
+```{r, cache=FALSE}
+p48_mixcr[["tcrs"]] <- p48_mixcr$jxns %>% 
+    select_top_jxns(allow_multi = TRUE) %>% 
+    construct_tcrs()
+
+p48_mixcr_trinity[["tcrs"]] <- p48_mixcr_trinity$jxns %>% 
+    select_top_jxns(allow_multi = TRUE) %>% 
+    construct_tcrs()
+
+# Combine IMGT and MiXCR TCRs
+mixcr_mixcr_trinity <- p48_mixcr$tcrs %>% 
+    mutate(tcr_source = "IMGT") %>% 
+    bind_rows(p48_mixcr_trinity$tcrs %>% 
+                  mutate(tcr_source = "MiXCR")) %>% 
+    list(tcrs = .)
+
+# Construct and display a sankey network linking libs to genes to junctions
+mixcr_mixcr_trinity[["plot"]] <- 
+    build_sankey_network(mixcr_mixcr_trinity$tcrs, 
+                         chain = "both") %>% 
+    build_sankey_plot(sankey_height = 550)
+```
+
+```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
+mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = TRUE)
+```
