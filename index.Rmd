@@ -50,7 +50,21 @@ library(tidyr)
 library(rCharts)
 ```
 
----  
+--- 
+
+## What the heck is this?
+
+<br>
+<br>
+
+### `slidify`: presentations made in `R` using Rmarkdown!
+
+> + share code in the same place as text
+> + evaluate `R` commands & include outputs in slides
+> + include images & other customizations as needed
+> + host as HTML on **GitHub**
+
+--- 
 
 ## From single cells to clonotypes
 #### TCR-sequencing at BRI
@@ -60,7 +74,7 @@ library(rCharts)
 
 ---  
 
-## TCR-seq: gene quantification & clonotype identification 
+## TCR-seq: quantification & clonotype identification 
 #### C1 RNA-seq Galaxy workflow developed by Mike Mason et al.
 <br>
 
@@ -158,6 +172,7 @@ head(mixcr$jxns, 5) %>% kable()
 #### Visually inspecting MiXCR junction data
 <br>
 
+`plot_mixcr_jxn_dist()` & `plot_mixcr_summary()`
 ```{r, cache=FALSE, fig.width=10, fig.height=6}
 source("R/plot_junction_stats.R")
 p1 <- plot_mixcr_jxn_dist(mixcr$jxns, cutoff_line = 20)
@@ -434,22 +449,26 @@ head(p91_mixcr$tcrs, 5) %>% kable()
 + Circos plots look cool, but aren't as informative for troubleshooting
 + I also don't have a good way to generate them on the fly...
 + Wanted a way to quickly inspect the connections between libraries, V genes,
-and junctions: [Sankey diagrams](http://bost.ocks.org/mike/sankey/) (and **d3** 
-- oooo..)!
+and junctions: [Sankey diagrams](http://bost.ocks.org/mike/sankey/) (fun 
+with **D3**!)
 
-```{r echo=TRUE, cache=FALSE}
+```{r cache=FALSE}
 # combine IMGT and MiXCR TCRs
 imgt_mixcr <- p91_imgt$tcrs %>% 
     mutate(tcr_source = "IMGT") %>% 
     bind_rows(p91_mixcr$tcrs %>% 
                   mutate(tcr_source = "MiXCR")) %>% 
     list(tcrs = .)
+```
+
+``` {r, echo=TRUE, cache=FALSE}
+# imgt_mixcr: list object with combined TCRs from IMGT and MiXCR
 
 # construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr[["plot"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 500)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ---
@@ -465,7 +484,7 @@ imgt_mixcr$plot$show('inline', include_assets = FALSE)
 --- 
 
 ## Working with clonotype data in `R`
-#### Viewing only \beta chain for P91 libraries
+#### Viewing only beta chain for P91 libraries
 <br>
 
 ```{r, cache=FALSE}
@@ -473,7 +492,7 @@ imgt_mixcr$plot$show('inline', include_assets = FALSE)
 imgt_mixcr[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 500)
+    build_sankey_plot(sankey_height = 450)
 ```
  
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -498,7 +517,7 @@ imgt_mixcr_diff <- p91_imgt$tcrs %>%
 imgt_mixcr_diff[["plot"]] <- 
     build_sankey_network(imgt_mixcr_diff$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 500)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -579,7 +598,7 @@ imgt_mixcr_trinity <- p91_imgt$tcrs %>%
 imgt_mixcr_trinity[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -589,7 +608,7 @@ imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 --- 
 
 ## Developing a new approach for MiXCR
-#### Not just \beta chain - results match for both TRAV and TRBV
+#### Not just beta chain - results match for both TRAV and TRBV
 <br>
 
 ```{r, cache=FALSE}
@@ -597,7 +616,7 @@ imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 imgt_mixcr_trinity[["plot"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 500)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -606,8 +625,21 @@ imgt_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 
 ---
 
-## Insights & advice from the MiLabratory
+## Insights & advice from the MiLaboratory
 #### Following up with the developers of MiXCR
+<br>
+
+> + Worked with Mike to summarize findings and questions, shared with Dmitry 
+Bolotin (first author of MiXCR paper)
+> + Re: alignment performance with short reads: selecting only top gene hit 
+will return whatever comes first, lexicographically, in the case of non-unique 
+alignments (in the case of short reads, such alignment degeneracy is expected)
+> + Suggested some additional output options & parameters to return *all* gene
+hits for a particular CDR3 junction
+> + Agreed that Trinity assembled contigs (especially on homogeneous data)
+should produce more accurate results
+> + Suggested additional parameters more specific to RNA-seq data
+> + Working on related pipelines that would pre-filter reads before assembly
 
 ----
 
@@ -615,7 +647,10 @@ imgt_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 #### Revisiting read length in MiXCR clonotype identification
 <br>
 
-+ Bulk libraries from project P48
++ Bulk libraries from project P48 (clones)
++ From flowcell C3523ACXX (4/8/2014): 100bp reads
++ Recently reprocessed for Peter, decided to check out MiXCR results with and
+without Trinity (no IMGT comparison this time)
 
 ```{r, cache=FALSE}
 project <- "P48"
@@ -650,6 +685,12 @@ p48_mixcr_trinity[["tcrs"]] <- p48_mixcr_trinity$jxns %>%
     construct_tcrs()
 ```
 
+---
+
+## Taking a closer look at P48
+#### Even for 100bp, MiXCR TCRs differ between reads & Trinity contigs
+<br>
+
 ```{r, cache=FALSE}
 # Combine IMGT and MiXCR TCRs
 mixcr_mixcr_trinity <- p48_mixcr$tcrs %>% 
@@ -662,7 +703,7 @@ mixcr_mixcr_trinity <- p48_mixcr$tcrs %>%
 mixcr_mixcr_trinity[["plot"]] <- 
     build_sankey_network(mixcr_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -671,7 +712,9 @@ mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 
 --- 
 
-## Allowing multiple TRAV
+## ...or do they?
+#### Helpful tip from Mike - allowing multiple TRAV
+<br>
 
 ```{r, cache=FALSE}
 p48_mixcr[["tcrs"]] <- p48_mixcr$jxns %>% 
@@ -682,18 +725,18 @@ p48_mixcr_trinity[["tcrs"]] <- p48_mixcr_trinity$jxns %>%
     select_top_jxns(allow_multi = TRUE) %>% 
     construct_tcrs()
 
-# Combine IMGT and MiXCR TCRs
+# combine IMGT and MiXCR TCRs
 mixcr_mixcr_trinity <- p48_mixcr$tcrs %>% 
     mutate(tcr_source = "IMGT") %>% 
     bind_rows(p48_mixcr_trinity$tcrs %>% 
                   mutate(tcr_source = "MiXCR")) %>% 
     list(tcrs = .)
 
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 mixcr_mixcr_trinity[["plot"]] <- 
     build_sankey_network(mixcr_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 450)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -703,11 +746,41 @@ mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = TRUE)
 --- 
 
 ## Remaining questions
+#### Continuing to improve TCR-seq pipeline tools & workflows
+<br>
+
+> + Selecting TRAVs: when to include two? Need better rules / heuristics
+> + Other improvements based on immune expertise?
+> + Reliability of Trinity assembly: does read length affect accuracy?
+> + Other parameters? Worth reinvestigating things the effect of trimming,
+duplicate filtering, etc. now that pipeline is in different form
 
 --- 
 
-## VDJtools
+## Interfacing with `VDJtools`
+#### Potentially useful new software package from the MiLaboratory
+<br>
+
+![vdjtools.png](images/vdjtools.png)
 
 --- 
 
-## Acknowledgements 
+## Acknowledgements
+<br>
+
+#### Bioinformatics Core
+
++ Mike Mason (now at Sage Bionetworks)
++ Scott Presnell
++ Elizabeth Whalen
+
+#### Systems Immunology / RNA-seq team
+
++ Peter Linsley
++ Vivian Gersuk (+ rest of the Genomics Core)
++ Tom Skillman
+
+#### MiLaboratory
+
++ Dmitry Bolotin
+
