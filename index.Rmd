@@ -63,6 +63,9 @@ library(rCharts)
 > + evaluate `R` commands & include outputs in slides
 > + include images & other customizations as needed
 > + host as HTML on **GitHub**
+> + this presentation: 
+[https://github.com/jaeddy/labMtg_dec2015](https://github.com/jaeddy/labMtg_dec2015) 
+(`gh-pages` branch)
 
 --- 
 
@@ -470,7 +473,7 @@ imgt_mixcr <- p91_imgt$tcrs %>%
 imgt_mixcr[["plot"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ---
@@ -483,6 +486,8 @@ imgt_mixcr[["plot"]] <-
 imgt_mixcr$plot$show('inline', include_assets = FALSE)
 ```
 
+<span class="footnote">orange: IMGT; blue: MiXCR</span>
+
 --- 
 
 ## Working with clonotype data in `R`
@@ -494,12 +499,14 @@ imgt_mixcr$plot$show('inline', include_assets = FALSE)
 imgt_mixcr[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
  
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 imgt_mixcr$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 ```
+
+<span class="footnote">orange: IMGT; blue: MiXCR</span>
 
 --- 
 
@@ -519,12 +526,14 @@ imgt_mixcr_diff <- p91_imgt$tcrs %>%
 imgt_mixcr_diff[["plot"]] <- 
     build_sankey_network(imgt_mixcr_diff$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 imgt_mixcr_diff$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 ```
+
+<span class="footnote">orange: IMGT; blue: MiXCR</span>
 
 --- 
 
@@ -600,12 +609,14 @@ imgt_mixcr_trinity <- p91_imgt$tcrs %>%
 imgt_mixcr_trinity[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 ```
+
+<span class="footnote">orange: IMGT; blue: MiXCR+Trinity</span>
 
 --- 
 
@@ -618,12 +629,14 @@ imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 imgt_mixcr_trinity[["plot"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 imgt_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 ```
+
+<span class="footnote">orange: IMGT; blue: MiXCR+Trinity</span>
 
 ---
 
@@ -705,12 +718,14 @@ mixcr_mixcr_trinity <- p48_mixcr$tcrs %>%
 mixcr_mixcr_trinity[["plot"]] <- 
     build_sankey_network(mixcr_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 ```
+
+<span class="footnote">orange: MiXCR (standard); blue: MiXCR+Trinity</span>
 
 --- 
 
@@ -738,12 +753,14 @@ mixcr_mixcr_trinity <- p48_mixcr$tcrs %>%
 mixcr_mixcr_trinity[["plot"]] <- 
     build_sankey_network(mixcr_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 450)
+    build_sankey_plot(sankey_height = 440)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = TRUE)
 ```
+
+<span class="footnote">orange: MiXCR (standard); blue: MiXCR+Trinity</span>
 
 --- 
 
