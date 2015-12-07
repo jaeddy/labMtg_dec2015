@@ -1,7 +1,7 @@
 ---
 title       : TCR-seq Pipeline Development
 subtitle    : Getting to know MiXCR a little better
-author      : James Eddy
+author      : James Eddy - Systems Immunology Lab Meeting - Dec. 12, 2015
 job         : 
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
@@ -417,6 +417,7 @@ p91_imgt[["tcrs"]] <- p91_imgt$jxns %>%
     construct_tcrs()
 ```
 
+`p91_imgt$tcrs`
 ```{r}
 head(p91_imgt$tcrs, 5) %>% kable()
 ```
@@ -436,8 +437,9 @@ p91_mixcr[["tcrs"]] <- p91_mixcr$jxns %>%
     construct_tcrs()
 ```
 
+`p91_mixcr$tcrs`
 ```{r}
-head(p91_mixcr$tcrs, 5) %>% kable()
+head(p91_mixcr$tcrs, 4) %>% kable()
 ```
 
 ---
@@ -754,6 +756,8 @@ mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = TRUE)
 > + Reliability of Trinity assembly: does read length affect accuracy?
 > + Other parameters? Worth reinvestigating things the effect of trimming,
 duplicate filtering, etc. now that pipeline is in different form
+> + Making code more useful to others: collaborative repo, `R` package?
+> + Improving visualization: from high level ideas to JS customization
 
 --- 
 

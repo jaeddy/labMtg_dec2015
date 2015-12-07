@@ -4,7 +4,7 @@
   <title>TCR-seq Pipeline Development</title>
   <meta charset="utf-8">
   <meta name="description" content="TCR-seq Pipeline Development">
-  <meta name="author" content="James Eddy">
+  <meta name="author" content="James Eddy - Systems Immunology Lab Meeting - Dec. 12, 2015">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -37,7 +37,7 @@
   <hgroup class="auto-fadein">
     <h1>TCR-seq Pipeline Development</h1>
     <h2>Getting to know MiXCR a little better</h2>
-    <p>James Eddy<br/></p>
+    <p>James Eddy - Systems Immunology Lab Meeting - Dec. 12, 2015<br/></p>
   </hgroup>
   <article></article>  
 </slide>
@@ -531,6 +531,8 @@ p91_imgt[[&quot;tcrs&quot;]] &lt;- p91_imgt$jxns %&gt;%
     construct_tcrs()
 </code></pre>
 
+<p><code>p91_imgt$tcrs</code></p>
+
 <table><thead>
 <tr>
 <th align="left">lib_id</th>
@@ -598,6 +600,8 @@ p91_mixcr[[&quot;tcrs&quot;]] &lt;- p91_mixcr$jxns %&gt;%
     construct_tcrs()
 </code></pre>
 
+<p><code>p91_mixcr$tcrs</code></p>
+
 <table><thead>
 <tr>
 <th align="left">lib_id</th>
@@ -634,13 +638,6 @@ p91_mixcr[[&quot;tcrs&quot;]] &lt;- p91_mixcr$jxns %&gt;%
 <td align="left">CAGADRLQTGMRGAF</td>
 <td align="left">TRBV9</td>
 <td align="left">CASSTRQNQPQHF</td>
-</tr>
-<tr>
-<td align="left">lib8464</td>
-<td align="left">TRAV25</td>
-<td align="left">CAGQTGANNLFF</td>
-<td align="left">TRBV12-1</td>
-<td align="left">CEKHNFVF</td>
 </tr>
 </tbody></table>
 
@@ -687,7 +684,7 @@ imgt_mixcr[[&quot;plot&quot;]] &lt;-
 
 <p><br></p>
 
-<div id = 'chart3de3128eda95' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e702148274e' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -697,7 +694,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de3128eda95",
+ "dom": "chart3e702148274e",
 "width":    800,
 "height":    450,
 "data": {
@@ -708,7 +705,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de3128eda95" 
+"id": "chart3e702148274e" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -862,7 +859,7 @@ node.append("text")
 
 <p><br></p>
 
-<div id = 'chart3de3647c2988' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e70227998b2' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -872,7 +869,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de3647c2988",
+ "dom": "chart3e70227998b2",
 "width":    800,
 "height":    450,
 "data": {
@@ -883,7 +880,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de3647c2988" 
+"id": "chart3e70227998b2" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1037,7 +1034,7 @@ node.append("text")
 
 <p><br></p>
 
-<div id = 'chart3de3154be4a3' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e706cf4b1cd' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1047,7 +1044,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de3154be4a3",
+ "dom": "chart3e706cf4b1cd",
 "width":    800,
 "height":    450,
 "data": {
@@ -1058,7 +1055,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de3154be4a3" 
+"id": "chart3e706cf4b1cd" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1264,7 +1261,7 @@ trimmed FASTQs (wasn&#39;t too hard - MiXCR allows FASTA file input)</li>
 
 <p><br></p>
 
-<div id = 'chart3de32b8636d2' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e7075a5256f' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1274,7 +1271,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de32b8636d2",
+ "dom": "chart3e7075a5256f",
 "width":    800,
 "height":    450,
 "data": {
@@ -1285,7 +1282,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de32b8636d2" 
+"id": "chart3e7075a5256f" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1439,7 +1436,7 @@ node.append("text")
 
 <p><br></p>
 
-<div id = 'chart3de3229aadc8' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e706960fc23' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1449,7 +1446,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de3229aadc8",
+ "dom": "chart3e706960fc23",
 "width":    800,
 "height":    450,
 "data": {
@@ -1460,7 +1457,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de3229aadc8" 
+"id": "chart3e706960fc23" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1661,7 +1658,7 @@ without Trinity (no IMGT comparison this time)</li>
 
 <p><br></p>
 
-<div id = 'chart3de32bcceb92' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e7038cf0126' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1671,7 +1668,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de32bcceb92",
+ "dom": "chart3e7038cf0126",
 "width":    800,
 "height":    450,
 "data": {
@@ -1682,7 +1679,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de32bcceb92" 
+"id": "chart3e7038cf0126" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1852,7 +1849,7 @@ node.append("text")
   }<br>
   </style></p>
 
-<div id = 'chart3de31570518e' class = 'rChart d3_sankey'></div>
+<div id = 'chart3e70795446bc' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1862,7 +1859,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3de31570518e",
+ "dom": "chart3e70795446bc",
 "width":    800,
 "height":    450,
 "data": {
@@ -1873,7 +1870,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3de31570518e" 
+"id": "chart3e70795446bc" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -2033,6 +2030,8 @@ node.append("text")
 <li>Reliability of Trinity assembly: does read length affect accuracy?</li>
 <li>Other parameters? Worth reinvestigating things the effect of trimming,
 duplicate filtering, etc. now that pipeline is in different form</li>
+<li>Making code more useful to others: collaborative repo, <code>R</code> package?</li>
+<li>Improving visualization: from high level ideas to JS customization</li>
 </ul>
 
   </article>
