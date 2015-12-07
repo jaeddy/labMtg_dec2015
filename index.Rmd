@@ -33,6 +33,9 @@ $(function() {
 strong {
   font-weight: bold;
 }
+em {
+  font-style: italic
+}
 </style>
 
 ```{r load_libs, cache=FALSE}
@@ -57,8 +60,8 @@ library(rCharts)
 
 ---  
 
-## TCR-seq workflow
-#### RNA-seq processing for clonotype identification 
+## TCR-seq: gene quantification & clonotype identification 
+#### C1 RNA-seq Galaxy workflow developed by Mike Mason et al.
 <br>
 
 ![imgt_workflow](images/imgt_workflow.png)
@@ -72,14 +75,14 @@ library(rCharts)
 > * Very fast, accurate alignment of reads to CDR3 (and other T-, B-cell 
 features)  
 > * Runs locally, without need for **Trinity** transcriptome assembly
-> * Found, implemented, & tested by Mike Mason
-> * Produced very similar results to IMGT V-QUEST in initial testing (later,
+> * Found, implemented, & tested by Mike
+> * Produced very similar results to **IMGT V-QUEST** in initial testing (later,
 we encountered some discrepancies related to input data)
 
 ---  
 
 ## Plugging in MiXCR
-#### Improving pipeline performance & reliability
+#### Potential modifications to improve pipeline performance & reliability
 <br>
 
 ![mixcr_workflow](images/mixcr_workflow.png)
@@ -96,7 +99,7 @@ in number of functional junctions identified
 > * Overlap in these cases appears highly dependent on cutoff used for
 `clone count` metric
 > * For some of the problematic projects, MiXCR was run by me instead of Mike
-> * Projects were also processed in Galaxy at different times
+> * Projects were also processed in **Galaxy** at different times
 
 ---  
 
@@ -105,6 +108,14 @@ in number of functional junctions identified
 <br>
 
 ![mixcr_diff](images/mixcr_diff.png)
+
+---
+
+## Working with clonotype data in `R`
+#### New code to save time/effort for testing & analysis
+<br>
+
+![tcrseq_repo](images/tcrseq_repo.png)
 
 ---  
 `r opts_knit$set(root.dir = "/Users/jaeddy/code/github/projects/tcrSeqAnalysis/")`
@@ -219,11 +230,12 @@ plot_grid(p1, p2, labels = c("Processing & MiXCR execution by Mike",
 + **Duplicate removal:** yes or no
 + **Read length:** 100bp (long) vs. 58bp (short)
 
-**Testing:** used RNA-seq data from [INSERT_FLOWCELL_HERE]: 100bp reads
+**Testing:** used RNA-seq data from flowcell C4WYJACXX (8/12/2014): 100bp reads
 
 + selected 20 samples  
 + manually simulated shorter reads for same set of samples  
-+ varied other parameters  
++ varied other parameters (updated Mike's code for running MiXCR to include
+options for read trimming, duplicate filtering, etc. - independent of Galaxy)
 + ran both MiXCR & IMGT (bonus function: `compile_imgt_output()`)  
 
 ```{r}
@@ -327,13 +339,26 @@ plot_grid(p1, p2, p3, p4,
 
 ---
 
-## Case 2: P91
+## Investigating discrepancies with MiXCR
+#### Examining inconsistencies in final TCR clonotypes
+<br>
+
++ For libraries from project P91 (T1D), MiXCR assigned different \alpha-\beta 
+(sometimes junctions, sometimes genes) combinations than IMGT V-QUEST  
++ Clonotypes from MiXCR highly dependent on clone count
 
 ![p91_circos](images/circos.png)
 
 ---
 
-## MiXCR (with short reads) vs. IMGT
+## Taking a closer look at P91
+#### Tracking down the source of clonotype mismatches
+<br>
+
++ Compared MiXCR and IMGT outputs for project P91-11
++ Used a 'moderate' clone count cutoff of **10**
++ When results disagreed, looked both at final clonotype outputs from MiXCR
+as well as intermediate results (i.e., alignments)
 
 ```{r, cache=FALSE}
 project <- "P91-11"
@@ -360,63 +385,78 @@ p91_mixcr <-
     list(jxns = .)
 ```
 
-```{r, cache=FALSE}
+More new code! (for dealing with more TCR-related tasks)
+```{r, echo=TRUE, cache=FALSE}
 source("R/inspect_tcrs.R")
 ```
 
 ---
 
-## Constructing & inspecting TCRs
+## Working with clonotype data in `R`
+#### Constructing & inspecting TCRs from IMGT outputs
+<br>
 
 ```{r echo=TRUE, cache=FALSE}
-# Combine TRAV and TRBV junctions to construct TCRs
+# combine TRAV and TRBV junctions for each library to construct TCRs
 p91_imgt[["tcrs"]] <- p91_imgt$jxns %>% 
     construct_tcrs()
 ```
 
 ```{r}
-head(p91_imgt$tcrs) %>% 
-    kable(format = "html")
+head(p91_imgt$tcrs, 5) %>% kable()
 ```
 
 ---
 
-## Constructing TCRs with MiXCR - selecting junctions 
+## Working with clonotype data in `R`
+#### Constructing TCRs with MiXCR: selecting top junctions 
+<br>
 
 ```{r echo=TRUE, cache=FALSE}
+# for each library, sort junctions first by clone count then by alignment score 
+# to select top junction sequence and top corresponding V gene hit for both the
+# alpha and beta chain
 p91_mixcr[["tcrs"]] <- p91_mixcr$jxns %>% 
-    select_top_jxns() %>% 
+    select_top_jxns() %>% # return only top TRAV and TRBV for each library
     construct_tcrs()
 ```
 
 ```{r}
-head(p91_mixcr$tcrs) %>% 
-    kable(format = "html")
+head(p91_mixcr$tcrs, 5) %>% kable()
 ```
 
 ---
 
-## Visualizing TCRs with Sankey diagrams
+## Working with clonotype data in `R`
+#### Visualizing TCRs with Sankey diagrams
+<br>
+
++ Circos plots look cool, but aren't as informative for troubleshooting
++ I also don't have a good way to generate them on the fly...
++ Wanted a way to quickly inspect the connections between libraries, V genes,
+and junctions: [Sankey diagrams](http://bost.ocks.org/mike/sankey/) (and **d3** 
+- oooo..)!
 
 ```{r echo=TRUE, cache=FALSE}
-# setwd("/Users/jaeddy/code/github/presentations/labMtg_dec2015/")
-# Combine IMGT and MiXCR TCRs
+# combine IMGT and MiXCR TCRs
 imgt_mixcr <- p91_imgt$tcrs %>% 
     mutate(tcr_source = "IMGT") %>% 
     bind_rows(p91_mixcr$tcrs %>% 
                   mutate(tcr_source = "MiXCR")) %>% 
     list(tcrs = .)
 
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr[["plot"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 500)
 ```
 
 ---
 
-## Sankey again...
+## Working with clonotype data in `R`
+#### Viewing all TCR relationships for P91 libraries
+<br>
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 imgt_mixcr$plot$show('inline', include_assets = FALSE)
@@ -424,14 +464,16 @@ imgt_mixcr$plot$show('inline', include_assets = FALSE)
 
 --- 
 
-## B chain only
+## Working with clonotype data in `R`
+#### Viewing only \beta chain for P91 libraries
+<br>
 
 ```{r, cache=FALSE}
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 500)
 ```
  
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -440,7 +482,9 @@ imgt_mixcr$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 
 --- 
 
-## Differences only
+## Investigating discrepancies with MiXCR
+#### Looking only at different TRBV gene/junction assignments
+<br>
 
 ```{r, cache=FALSE}
 imgt_mixcr_diff <- p91_imgt$tcrs %>% 
@@ -454,7 +498,7 @@ imgt_mixcr_diff <- p91_imgt$tcrs %>%
 imgt_mixcr_diff[["plot"]] <- 
     build_sankey_network(imgt_mixcr_diff$tcrs, 
                          chain = "B") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 500)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -463,14 +507,47 @@ imgt_mixcr_diff$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 
 --- 
 
-## MiXCR with Trinity
+## Investigating discrepancies with MiXCR
+#### TRBV11-1 vs. TRBV7-9: short reads, non-unique alignments
+<br>
+
+```
+>>> Alignments with V gene:
+
+TRBV11-1*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+TRBV7-9*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+```
+
+---
+
+## Investigating discrepancies with MiXCR
+#### New idea: MiXCR with Trinity?
+<br>
+
++ Came up in discussions with Mike, Scott, Peter
++ Input data for IMGT is actually assembled contigs produced by Trinity (not
+short reads)
++ With help from Mike, modified MiXCR code to run on Trinity outputs instead of
+trimmed FASTQs (wasn't too hard - MiXCR allows FASTA file input)
++ Compared new results
 
 ```{r, cache=FALSE}
 mixcr_folder <- "data/P91_new/P91-11/mixcrOutput_trinity/"
 project <- "P91-11"
 out_folder <- mixcr_folder
 
-# Combine MiXCR junctions into a single file; read, format, and filter junctions
+# combine MiXCR junctions into a single file; read, format, and filter junctions
 p91_mixcr_trinity <- 
     combine_mixcr_outputs(mixcr_folder, out_folder, project) %>% 
     format_mixcr_jxns() %>% 
@@ -478,7 +555,7 @@ p91_mixcr_trinity <-
     list(jxns = .)
 ```
 
-```{r echo=TRUE, cache=FALSE}
+```{r, cache=FALSE}
 p91_mixcr_trinity[["tcrs"]] <- p91_mixcr_trinity$jxns %>% 
     select_top_jxns() %>% 
     construct_tcrs()
@@ -486,17 +563,19 @@ p91_mixcr_trinity[["tcrs"]] <- p91_mixcr_trinity$jxns %>%
 
 --- 
 
-## How'd we do?
+## Developing a new approach for MiXCR
+#### MiXCR with Trinity reproduces IMGT results
+<br>
 
 ```{r, cache=FALSE}
-# Combine IMGT and MiXCR TCRs
+# combine IMGT and MiXCR TCRs
 imgt_mixcr_trinity <- p91_imgt$tcrs %>% 
     mutate(tcr_source = "IMGT") %>% 
     bind_rows(p91_mixcr_trinity$tcrs %>% 
                   mutate(tcr_source = "MiXCR")) %>% 
     list(tcrs = .)
 
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr_trinity[["plot_b"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "B") %>% 
@@ -509,14 +588,16 @@ imgt_mixcr_trinity$plot_b$show('inline', cdn = TRUE, include_assets = FALSE)
 
 --- 
 
-## Checking all
+## Developing a new approach for MiXCR
+#### Not just \beta chain - results match for both TRAV and TRBV
+<br>
 
 ```{r, cache=FALSE}
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr_trinity[["plot"]] <- 
     build_sankey_network(imgt_mixcr_trinity$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 500)
 ```
 
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
@@ -525,7 +606,16 @@ imgt_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = FALSE)
 
 ---
 
-## Case 3: P48
+## Insights & advice from the MiLabratory
+#### Following up with the developers of MiXCR
+
+----
+
+## Investigating discrepancies with MiXCR
+#### Revisiting read length in MiXCR clonotype identification
+<br>
+
++ Bulk libraries from project P48
 
 ```{r, cache=FALSE}
 project <- "P48"

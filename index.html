@@ -72,6 +72,9 @@ $(function() {
 strong {
   font-weight: bold;
 }
+em {
+  font-style: italic
+}
 </style>
 
   </article>
@@ -95,10 +98,10 @@ strong {
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>TCR-seq workflow</h2>
+    <h2>TCR-seq: gene quantification &amp; clonotype identification</h2>
   </hgroup>
   <article data-timings="">
-    <h4>RNA-seq processing for clonotype identification</h4>
+    <h4>C1 RNA-seq Galaxy workflow developed by Mike Mason et al.</h4>
 
 <p><br></p>
 
@@ -121,8 +124,8 @@ strong {
 <li>Very fast, accurate alignment of reads to CDR3 (and other T-, B-cell 
 features)<br></li>
 <li>Runs locally, without need for <strong>Trinity</strong> transcriptome assembly</li>
-<li>Found, implemented, &amp; tested by Mike Mason</li>
-<li>Produced very similar results to IMGT V-QUEST in initial testing (later,
+<li>Found, implemented, &amp; tested by Mike</li>
+<li>Produced very similar results to <strong>IMGT V-QUEST</strong> in initial testing (later,
 we encountered some discrepancies related to input data)</li>
 </ul>
 
@@ -135,7 +138,7 @@ we encountered some discrepancies related to input data)</li>
     <h2>Plugging in MiXCR</h2>
   </hgroup>
   <article data-timings="">
-    <h4>Improving pipeline performance &amp; reliability</h4>
+    <h4>Potential modifications to improve pipeline performance &amp; reliability</h4>
 
 <p><br></p>
 
@@ -161,7 +164,7 @@ in number of functional junctions identified</li>
 <li>Overlap in these cases appears highly dependent on cutoff used for
 <code>clone count</code> metric</li>
 <li>For some of the problematic projects, MiXCR was run by me instead of Mike</li>
-<li>Projects were also processed in Galaxy at different times</li>
+<li>Projects were also processed in <strong>Galaxy</strong> at different times</li>
 </ul>
 
   </article>
@@ -188,6 +191,21 @@ in number of functional junctions identified</li>
     <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
   <article data-timings="">
+    <h4>New code to save time/effort for testing &amp; analysis</h4>
+
+<p><br></p>
+
+<p><img src="images/tcrseq_repo.png" alt="tcrseq_repo"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Working with clonotype data in <code>R</code></h2>
+  </hgroup>
+  <article data-timings="">
     <h4>Combining MiXCR outputs</h4>
 
 <pre><code class="r">source(&quot;R/prep_junctions.R&quot;)
@@ -205,7 +223,7 @@ mixcr_file &lt;- combine_mixcr_outputs(mixcr_folder, out_folder, project)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-9" style="background:;">
+<slide class="" id="slide-10" style="background:;">
   <hgroup>
     <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
@@ -281,7 +299,7 @@ mixcr_file &lt;- combine_mixcr_outputs(mixcr_folder, out_folder, project)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-10" style="background:;">
+<slide class="" id="slide-11" style="background:;">
   <hgroup>
     <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
@@ -296,7 +314,7 @@ mixcr_file &lt;- combine_mixcr_outputs(mixcr_folder, out_folder, project)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-11" style="background:;">
+<slide class="" id="slide-12" style="background:;">
   <hgroup>
     <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
@@ -357,7 +375,7 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-12" style="background:;">
+<slide class="" id="slide-13" style="background:;">
   <hgroup>
     <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
@@ -372,7 +390,7 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-13" style="background:;">
+<slide class="" id="slide-14" style="background:;">
   <hgroup>
     <h2>Investigating discrepancies with MiXCR</h2>
   </hgroup>
@@ -387,7 +405,7 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-14" style="background:;">
+<slide class="" id="slide-15" style="background:;">
   <hgroup>
     <h2>Investigating discrepancies with MiXCR</h2>
   </hgroup>
@@ -402,12 +420,13 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
 <li><strong>Read length:</strong> 100bp (long) vs. 58bp (short)</li>
 </ul>
 
-<p><strong>Testing:</strong> used RNA-seq data from [INSERT_FLOWCELL_HERE]: 100bp reads</p>
+<p><strong>Testing:</strong> used RNA-seq data from flowcell C4WYJACXX (8/12/2014): 100bp reads</p>
 
 <ul>
 <li>selected 20 samples<br></li>
 <li>manually simulated shorter reads for same set of samples<br></li>
-<li>varied other parameters<br></li>
+<li>varied other parameters (updated Mike&#39;s code for running MiXCR to include
+options for read trimming, duplicate filtering, etc. - independent of Galaxy)</li>
 <li>ran both MiXCR &amp; IMGT (bonus function: <code>compile_imgt_output()</code>)<br></li>
 </ul>
 
@@ -415,7 +434,7 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-15" style="background:;">
+<slide class="" id="slide-16" style="background:;">
   <hgroup>
     <h2>Investigating discrepancies with MiXCR</h2>
   </hgroup>
@@ -430,92 +449,47 @@ imgt &lt;- format_imgt_jxns(imgt_file) %&gt;% # read and filter IMGT junctions
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-16" style="background:;">
-  <hgroup>
-    <h2>Case 2: P91</h2>
-  </hgroup>
-  <article data-timings="">
-    <p><img src="images/circos.png" alt="p91_circos"></p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
 <slide class="" id="slide-17" style="background:;">
   <hgroup>
-    <h2>MiXCR (with short reads) vs. IMGT</h2>
+    <h2>Investigating discrepancies with MiXCR</h2>
   </hgroup>
   <article data-timings="">
-    
+    <h4>Examining inconsistencies in final TCR clonotypes</h4>
+
+<p><br></p>
+
+<ul>
+<li>For libraries from project P91 (T1D), MiXCR assigned different \alpha-\beta 
+(sometimes junctions, sometimes genes) combinations than IMGT V-QUEST<br></li>
+<li>Clonotypes from MiXCR highly dependent on clone count</li>
+</ul>
+
+<p><img src="images/circos.png" alt="p91_circos"></p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-18" style="background:;">
   <hgroup>
-    <h2>Constructing &amp; inspecting TCRs</h2>
+    <h2>Taking a closer look at P91</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r"># Combine TRAV and TRBV junctions to construct TCRs
-p91_imgt[[&quot;tcrs&quot;]] &lt;- p91_imgt$jxns %&gt;% 
-    construct_tcrs()
-</code></pre>
+    <h4>Tracking down the source of clonotype mismatches</h4>
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:left;"> trav_gene </th>
-   <th style="text-align:left;"> trav_jxn </th>
-   <th style="text-align:left;"> trbv_gene </th>
-   <th style="text-align:left;"> trbv_jxn </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib8472 </td>
-   <td style="text-align:left;"> TRAV25 </td>
-   <td style="text-align:left;"> CAGQTGANNLFF </td>
-   <td style="text-align:left;"> TRBV4-3 </td>
-   <td style="text-align:left;"> CASSQEVGTVPNQPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8474 </td>
-   <td style="text-align:left;"> TRAV12-3 </td>
-   <td style="text-align:left;"> CAMSRILTGGGNKLTF </td>
-   <td style="text-align:left;"> TRBV7-2 </td>
-   <td style="text-align:left;"> CASSFPSSPLHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8451 </td>
-   <td style="text-align:left;"> TRAV25 </td>
-   <td style="text-align:left;"> CAGQTGANNLFF </td>
-   <td style="text-align:left;"> TRBV4-3 </td>
-   <td style="text-align:left;"> CASSQEVGTVPNQPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8453 </td>
-   <td style="text-align:left;"> TRAV16 </td>
-   <td style="text-align:left;"> CALLKGSGAGSYQLTF </td>
-   <td style="text-align:left;"> TRBV20-1 </td>
-   <td style="text-align:left;"> CSAPRGASGGSSYNEQFF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8493 </td>
-   <td style="text-align:left;"> TRAV8-4 </td>
-   <td style="text-align:left;"> CAVYGGATNKLIF </td>
-   <td style="text-align:left;"> TRBV5-1 </td>
-   <td style="text-align:left;"> CASSLDPGPNEQFF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV7-9 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-</tbody>
-</table>
+<p><br></p>
+
+<ul>
+<li>Compared MiXCR and IMGT outputs for project P91-11</li>
+<li>Used a &#39;moderate&#39; clone count cutoff of <strong>10</strong></li>
+<li>When results disagreed, looked both at final clonotype outputs from MiXCR
+as well as intermediate results (i.e., alignments)</li>
+</ul>
+
+<p>More new code! (for dealing with more TCR-related tasks)</p>
+
+<pre><code class="r">source(&quot;R/inspect_tcrs.R&quot;)
+</code></pre>
 
   </article>
   <!-- Presenter Notes -->
@@ -523,69 +497,63 @@ p91_imgt[[&quot;tcrs&quot;]] &lt;- p91_imgt$jxns %&gt;%
 
 <slide class="" id="slide-19" style="background:;">
   <hgroup>
-    <h2>Constructing TCRs with MiXCR - selecting junctions</h2>
+    <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r">p91_mixcr[[&quot;tcrs&quot;]] &lt;- p91_mixcr$jxns %&gt;% 
-    select_top_jxns() %&gt;% 
+    <h4>Constructing &amp; inspecting TCRs from IMGT outputs</h4>
+
+<p><br></p>
+
+<pre><code class="r"># combine TRAV and TRBV junctions for each library to construct TCRs
+p91_imgt[[&quot;tcrs&quot;]] &lt;- p91_imgt$jxns %&gt;% 
     construct_tcrs()
 </code></pre>
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:left;"> trav_gene </th>
-   <th style="text-align:left;"> trav_jxn </th>
-   <th style="text-align:left;"> trbv_gene </th>
-   <th style="text-align:left;"> trbv_jxn </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib8443 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-   <td style="text-align:left;"> TRBV7-8 </td>
-   <td style="text-align:left;"> CASSATGEPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8443 </td>
-   <td style="text-align:left;"> TRAV13-2 </td>
-   <td style="text-align:left;"> CALSSFMF </td>
-   <td style="text-align:left;"> TRBV7-8 </td>
-   <td style="text-align:left;"> CASSATGEPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8445 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8445 </td>
-   <td style="text-align:left;"> TRAV12-3 </td>
-   <td style="text-align:left;"> CAMNNENARLLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-</tbody>
-</table>
+<table><thead>
+<tr>
+<th align="left">lib_id</th>
+<th align="left">trav_gene</th>
+<th align="left">trav_jxn</th>
+<th align="left">trbv_gene</th>
+<th align="left">trbv_jxn</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">lib8472</td>
+<td align="left">TRAV25</td>
+<td align="left">CAGQTGANNLFF</td>
+<td align="left">TRBV4-3</td>
+<td align="left">CASSQEVGTVPNQPQHF</td>
+</tr>
+<tr>
+<td align="left">lib8474</td>
+<td align="left">TRAV12-3</td>
+<td align="left">CAMSRILTGGGNKLTF</td>
+<td align="left">TRBV7-2</td>
+<td align="left">CASSFPSSPLHF</td>
+</tr>
+<tr>
+<td align="left">lib8451</td>
+<td align="left">TRAV25</td>
+<td align="left">CAGQTGANNLFF</td>
+<td align="left">TRBV4-3</td>
+<td align="left">CASSQEVGTVPNQPQHF</td>
+</tr>
+<tr>
+<td align="left">lib8453</td>
+<td align="left">TRAV16</td>
+<td align="left">CALLKGSGAGSYQLTF</td>
+<td align="left">TRBV20-1</td>
+<td align="left">CSAPRGASGGSSYNEQFF</td>
+</tr>
+<tr>
+<td align="left">lib8493</td>
+<td align="left">TRAV8-4</td>
+<td align="left">CAVYGGATNKLIF</td>
+<td align="left">TRBV5-1</td>
+<td align="left">CASSLDPGPNEQFF</td>
+</tr>
+</tbody></table>
 
   </article>
   <!-- Presenter Notes -->
@@ -593,23 +561,66 @@ p91_imgt[[&quot;tcrs&quot;]] &lt;- p91_imgt$jxns %&gt;%
 
 <slide class="" id="slide-20" style="background:;">
   <hgroup>
-    <h2>Visualizing TCRs with Sankey diagrams</h2>
+    <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r"># setwd(&quot;/Users/jaeddy/code/github/presentations/labMtg_dec2015/&quot;)
-# Combine IMGT and MiXCR TCRs
-imgt_mixcr &lt;- p91_imgt$tcrs %&gt;% 
-    mutate(tcr_source = &quot;IMGT&quot;) %&gt;% 
-    bind_rows(p91_mixcr$tcrs %&gt;% 
-                  mutate(tcr_source = &quot;MiXCR&quot;)) %&gt;% 
-    list(tcrs = .)
+    <h4>Constructing TCRs with MiXCR: selecting top junctions</h4>
 
-# Construct and display a sankey network linking libs to genes to junctions
-imgt_mixcr[[&quot;plot&quot;]] &lt;- 
-    build_sankey_network(imgt_mixcr$tcrs, 
-                         chain = &quot;both&quot;) %&gt;% 
-    build_sankey_plot(sankey_height = 550)
+<p><br></p>
+
+<pre><code class="r"># for each library, sort junctions first by clone count then by alignment score 
+# to select top junction sequence and top corresponding V gene hit for both the
+# alpha and beta chain
+p91_mixcr[[&quot;tcrs&quot;]] &lt;- p91_mixcr$jxns %&gt;% 
+    select_top_jxns() %&gt;% # return only top TRAV and TRBV for each library
+    construct_tcrs()
 </code></pre>
+
+<table><thead>
+<tr>
+<th align="left">lib_id</th>
+<th align="left">trav_gene</th>
+<th align="left">trav_jxn</th>
+<th align="left">trbv_gene</th>
+<th align="left">trbv_jxn</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">lib8445</td>
+<td align="left">TRAV26-2</td>
+<td align="left">CILRDTISNFGNEKLTF</td>
+<td align="left">TRBV11-1</td>
+<td align="left">CASSFGSSYYGYTF</td>
+</tr>
+<tr>
+<td align="left">lib8449</td>
+<td align="left">TRAV26-2</td>
+<td align="left">CILRDTISNFGNEKLTF</td>
+<td align="left">TRBV11-1</td>
+<td align="left">CASSFGSSYYGYTF</td>
+</tr>
+<tr>
+<td align="left">lib8451</td>
+<td align="left">TRAV25</td>
+<td align="left">CAGQTGANNLFF</td>
+<td align="left">TRBV4-3</td>
+<td align="left">CASSQEVGTVPNQPQHF</td>
+</tr>
+<tr>
+<td align="left">lib8462</td>
+<td align="left">TRAV8-7</td>
+<td align="left">CAGADRLQTGMRGAF</td>
+<td align="left">TRBV9</td>
+<td align="left">CASSTRQNQPQHF</td>
+</tr>
+<tr>
+<td align="left">lib8464</td>
+<td align="left">TRAV25</td>
+<td align="left">CAGQTGANNLFF</td>
+<td align="left">TRBV12-1</td>
+<td align="left">CEKHNFVF</td>
+</tr>
+</tbody></table>
 
   </article>
   <!-- Presenter Notes -->
@@ -617,10 +628,49 @@ imgt_mixcr[[&quot;plot&quot;]] &lt;-
 
 <slide class="" id="slide-21" style="background:;">
   <hgroup>
-    <h2>Sankey again...</h2>
+    <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
   <article data-timings="">
-    <div id = 'chart4c0169277a27' class = 'rChart d3_sankey'></div>
+    <h4>Visualizing TCRs with Sankey diagrams</h4>
+
+<p><br></p>
+
+<ul>
+<li>Circos plots look cool, but aren&#39;t as informative for troubleshooting</li>
+<li>I also don&#39;t have a good way to generate them on the fly...</li>
+<li>Wanted a way to quickly inspect the connections between libraries, V genes,
+and junctions: <a href="http://bost.ocks.org/mike/sankey/">Sankey diagrams</a> (and <strong>d3</strong> </li>
+<li>oooo..)!</li>
+</ul>
+
+<pre><code class="r"># combine IMGT and MiXCR TCRs
+imgt_mixcr &lt;- p91_imgt$tcrs %&gt;% 
+    mutate(tcr_source = &quot;IMGT&quot;) %&gt;% 
+    bind_rows(p91_mixcr$tcrs %&gt;% 
+                  mutate(tcr_source = &quot;MiXCR&quot;)) %&gt;% 
+    list(tcrs = .)
+
+# construct and display a sankey network linking libs to genes to junctions
+imgt_mixcr[[&quot;plot&quot;]] &lt;- 
+    build_sankey_network(imgt_mixcr$tcrs, 
+                         chain = &quot;both&quot;) %&gt;% 
+    build_sankey_plot(sankey_height = 500)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Working with clonotype data in <code>R</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Viewing all TCR relationships for P91 libraries</h4>
+
+<p><br></p>
+
+<div id = 'chart34b5351029fb' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -630,9 +680,9 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c0169277a27",
+ "dom": "chart34b5351029fb",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
  "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV8-7", "TRAV25", "TRAV26-2", "TRAV12-3", "TRAV12-3", "TRAV25", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1" ],
 "target": [ "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV8-7", "TRAV25", "TRAV26-2", "TRAV12-3", "TRAV12-3", "TRAV25", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAVYGGATNKLIF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CAGADRLQTGMRGAF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CAMSRILTGGGNKLTF", "CAMNNENARLLTF", "CAGQTGANNLFF", "CVVSDRGSTLGRLYF", "CAVYGGATNKLIF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSTRQNQPQHF", "CEKHNFVF", "CASSFGSSYYGYTF", "CASSFPSSPLHF", "CASRSTGTGGAYGYTF", "CASSQEVGTVPNQPQHF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
@@ -641,178 +691,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c0169277a27" 
-};
-
-params.units ? units = " " + params.units : units = "";
-
-//hard code these now but eventually make available
-var formatNumber = d3.format("0.1f"),    // zero decimal places
-    format = function(d) { return formatNumber(d) + units; },
-    color = d3.scale.category20();
-
-if(params.labelFormat){
-  formatNumber = d3.format(".2%");
-}
-
-var svg = d3.select('#' + params.id).append("svg")
-    .attr("width", params.width)
-    .attr("height", params.height);
-
-var sankey = d3.sankey()
-    .nodeWidth(params.nodeWidth)
-    .nodePadding(params.nodePadding)
-    .layout(params.layout)
-    .size([params.width,params.height]);
-
-var path = sankey.link();
-
-var data = params.data,
-    links = [],
-    nodes = [];
-
-//get all source and target into nodes
-//will reduce to unique in the next step
-//also get links in object form
-data.source.forEach(function (d, i) {
-    nodes.push({ "name": data.source[i] });
-    nodes.push({ "name": data.target[i] });
-    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
-});
-
-//now get nodes based on links data
-//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
-//this handy little function returns only the distinct / unique nodes
-nodes = d3.keys(d3.nest()
-                .key(function (d) { return d.name; })
-                .map(nodes));
-
-//it appears d3 with force layout wants a numeric source and target
-//so loop through each link replacing the text with its index from node
-links.forEach(function (d, i) {
-    links[i].source = nodes.indexOf(links[i].source);
-    links[i].target = nodes.indexOf(links[i].target);
-});
-
-//now loop through each nodes to make nodes an array of objects rather than an array of strings
-nodes.forEach(function (d, i) {
-    nodes[i] = { "name": d };
-});
-
-sankey
-  .nodes(nodes)
-  .links(links)
-  .layout(params.layout);
-
-var link = svg.append("g").selectAll(".link")
-  .data(links)
-.enter().append("path")
-  .attr("class", "link")
-  .attr("d", path)
-  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
-  .style('stroke', function(d){
-      if (format(d.value % 1) == 0.2) {
-        return('#56B4E9');
-      } else {
-        return('#E69F00');
-      }
-    })
-    .style('stroke-opacity', 0.5)
-    .on('mouseover', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.9)
-    })
-    .on('mouseout', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.5)
-    })
-  .sort(function (a, b) {
-      return (b.dy - a.dy);
-  });
-
-link.append("title")
-  .text(function (d) {
-      if (format(d.value % 1) == 0.2) {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
-      } else {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
-      }
-  });
-
-var node = svg.append("g").selectAll(".node")
-  .data(nodes)
-.enter().append("g")
-  .attr("class", "node")
-  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-.call(d3.behavior.drag()
-  .origin(function (d) { return d; })
-  .on("dragstart", function () { this.parentNode.appendChild(this); })
-  .on("drag", dragmove));
-
-node.append("rect")
-  .attr("height", function (d) { return d.dy; })
-  .attr("width", sankey.nodeWidth())
-  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
-  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
-.append("title")
-  .text(function (d) { return d.name + "\n" + format(d.value); });
-
-node.append("text")
-  .attr("x", -6)
-  .attr("y", function (d) { return d.dy / 2; })
-  .attr("dy", ".35em")
-  .attr("text-anchor", "end")
-  .attr("transform", null)
-  .text(function (d) { return d.name; })
-.filter(function (d) { return d.x < params.width / 2; })
-  .attr("x", 6 + sankey.nodeWidth())
-  .attr("text-anchor", "start");
-
-// the function for moving the nodes
-  function dragmove(d) {
-    d3.select(this).attr("transform",
-        "translate(" + (
-                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
-                ) + "," + (
-                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
-                ) + ")");
-        sankey.relayout();
-        link.attr("d", path);
-  }
-})();
-</script>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-22" style="background:;">
-  <hgroup>
-    <h2>B chain only</h2>
-  </hgroup>
-  <article data-timings="">
-    <div id = 'chart4c0169de3f1c' class = 'rChart d3_sankey'></div>
-
-<!--Attribution:
-Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
-Mike Bostock http://bost.ocks.org/mike/sankey/
--->
-
-<script>
-(function(){
-var params = {
- "dom": "chart4c0169de3f1c",
-"width":    800,
-"height":    550,
-"data": {
- "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1" ],
-"target": [ "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSTRQNQPQHF", "CEKHNFVF", "CASSFGSSYYGYTF", "CASSFPSSPLHF", "CASRSTGTGGAYGYTF", "CASSQEVGTVPNQPQHF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
-"value": [ 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8445.2, 8449.2, 8451.2, 8462.2, 8464.2, 8467.2, 8474.2, 8480.2, 8482.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8445.2, 8449.2, 8451.2, 8462.2, 8464.2, 8467.2, 8474.2, 8480.2, 8482.2, 8488.2, 8493.2 ] 
-},
-"nodeWidth":     15,
-"nodePadding":     10,
-"layout":     32,
-"id": "chart4c0169de3f1c" 
+"id": "chart34b5351029fb" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -959,10 +838,14 @@ node.append("text")
 
 <slide class="" id="slide-23" style="background:;">
   <hgroup>
-    <h2>Differences only</h2>
+    <h2>Working with clonotype data in <code>R</code></h2>
   </hgroup>
   <article data-timings="">
-    <div id = 'chart4c017ccce8c5' class = 'rChart d3_sankey'></div>
+    <h4>Viewing only \beta chain for P91 libraries</h4>
+
+<p><br></p>
+
+<div id = 'chart34b5216d7e03' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -972,18 +855,18 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c017ccce8c5",
+ "dom": "chart34b5216d7e03",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
- "source": [ "lib8449", "lib8467", "lib8464", "lib8485", "lib8445", "lib8444", "lib8453", "lib8474", "lib8472", "lib8480", "lib8474", "lib8467", "lib8464", "lib8462", "lib8449", "lib8445", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1" ],
-"target": [ "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CSAPRGASGGSSYNEQFF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASRSTGTGGAYGYTF", "CASSFPSSPLHF", "CASSFGSSYYGYTF", "CEKHNFVF", "CASSTRQNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF" ],
-"value": [ 8449.1, 8467.1, 8464.1, 8485.1, 8445.1, 8444.1, 8453.1, 8474.1, 8472.1, 8480.2, 8474.2, 8467.2, 8464.2, 8462.2, 8449.2, 8445.2, 8449.1, 8467.1, 8464.1, 8485.1, 8445.1, 8444.1, 8453.1, 8474.1, 8472.1, 8480.2, 8474.2, 8467.2, 8464.2, 8462.2, 8449.2, 8445.2 ] 
+ "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1" ],
+"target": [ "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSTRQNQPQHF", "CEKHNFVF", "CASSFGSSYYGYTF", "CASSFPSSPLHF", "CASRSTGTGGAYGYTF", "CASSQEVGTVPNQPQHF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
+"value": [ 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8445.2, 8449.2, 8451.2, 8462.2, 8464.2, 8467.2, 8474.2, 8480.2, 8482.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8445.2, 8449.2, 8451.2, 8462.2, 8464.2, 8467.2, 8474.2, 8480.2, 8482.2, 8488.2, 8493.2 ] 
 },
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c017ccce8c5" 
+"id": "chart34b5216d7e03" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1130,24 +1013,14 @@ node.append("text")
 
 <slide class="" id="slide-24" style="background:;">
   <hgroup>
-    <h2>MiXCR with Trinity</h2>
+    <h2>Investigating discrepancies with MiXCR</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r">p91_mixcr_trinity[[&quot;tcrs&quot;]] &lt;- p91_mixcr_trinity$jxns %&gt;% 
-    select_top_jxns() %&gt;% 
-    construct_tcrs()
-</code></pre>
+    <h4>Looking only at different TRBV gene/junction assignments</h4>
 
-  </article>
-  <!-- Presenter Notes -->
-</slide>
+<p><br></p>
 
-<slide class="" id="slide-25" style="background:;">
-  <hgroup>
-    <h2>How&#39;d we do?</h2>
-  </hgroup>
-  <article data-timings="">
-    <div id = 'chart4c017ea55c0f' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b533e0eabb' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1157,7 +1030,234 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c017ea55c0f",
+ "dom": "chart34b533e0eabb",
+"width":    800,
+"height":    500,
+"data": {
+ "source": [ "lib8449", "lib8467", "lib8464", "lib8485", "lib8445", "lib8444", "lib8453", "lib8474", "lib8472", "lib8480", "lib8474", "lib8467", "lib8464", "lib8462", "lib8449", "lib8445", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1" ],
+"target": [ "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CSAPRGASGGSSYNEQFF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASRSTGTGGAYGYTF", "CASSFPSSPLHF", "CASSFGSSYYGYTF", "CEKHNFVF", "CASSTRQNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF" ],
+"value": [ 8449.1, 8467.1, 8464.1, 8485.1, 8445.1, 8444.1, 8453.1, 8474.1, 8472.1, 8480.2, 8474.2, 8467.2, 8464.2, 8462.2, 8449.2, 8445.2, 8449.1, 8467.1, 8464.1, 8485.1, 8445.1, 8444.1, 8453.1, 8474.1, 8472.1, 8480.2, 8474.2, 8467.2, 8464.2, 8462.2, 8449.2, 8445.2 ] 
+},
+"nodeWidth":     15,
+"nodePadding":     10,
+"layout":     32,
+"id": "chart34b533e0eabb" 
+};
+
+params.units ? units = " " + params.units : units = "";
+
+//hard code these now but eventually make available
+var formatNumber = d3.format("0.1f"),    // zero decimal places
+    format = function(d) { return formatNumber(d) + units; },
+    color = d3.scale.category20();
+
+if(params.labelFormat){
+  formatNumber = d3.format(".2%");
+}
+
+var svg = d3.select('#' + params.id).append("svg")
+    .attr("width", params.width)
+    .attr("height", params.height);
+
+var sankey = d3.sankey()
+    .nodeWidth(params.nodeWidth)
+    .nodePadding(params.nodePadding)
+    .layout(params.layout)
+    .size([params.width,params.height]);
+
+var path = sankey.link();
+
+var data = params.data,
+    links = [],
+    nodes = [];
+
+//get all source and target into nodes
+//will reduce to unique in the next step
+//also get links in object form
+data.source.forEach(function (d, i) {
+    nodes.push({ "name": data.source[i] });
+    nodes.push({ "name": data.target[i] });
+    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
+});
+
+//now get nodes based on links data
+//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
+//this handy little function returns only the distinct / unique nodes
+nodes = d3.keys(d3.nest()
+                .key(function (d) { return d.name; })
+                .map(nodes));
+
+//it appears d3 with force layout wants a numeric source and target
+//so loop through each link replacing the text with its index from node
+links.forEach(function (d, i) {
+    links[i].source = nodes.indexOf(links[i].source);
+    links[i].target = nodes.indexOf(links[i].target);
+});
+
+//now loop through each nodes to make nodes an array of objects rather than an array of strings
+nodes.forEach(function (d, i) {
+    nodes[i] = { "name": d };
+});
+
+sankey
+  .nodes(nodes)
+  .links(links)
+  .layout(params.layout);
+
+var link = svg.append("g").selectAll(".link")
+  .data(links)
+.enter().append("path")
+  .attr("class", "link")
+  .attr("d", path)
+  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
+  .style('stroke', function(d){
+      if (format(d.value % 1) == 0.2) {
+        return('#56B4E9');
+      } else {
+        return('#E69F00');
+      }
+    })
+    .style('stroke-opacity', 0.5)
+    .on('mouseover', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.9)
+    })
+    .on('mouseout', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.5)
+    })
+  .sort(function (a, b) {
+      return (b.dy - a.dy);
+  });
+
+link.append("title")
+  .text(function (d) {
+      if (format(d.value % 1) == 0.2) {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
+      } else {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
+      }
+  });
+
+var node = svg.append("g").selectAll(".node")
+  .data(nodes)
+.enter().append("g")
+  .attr("class", "node")
+  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+.call(d3.behavior.drag()
+  .origin(function (d) { return d; })
+  .on("dragstart", function () { this.parentNode.appendChild(this); })
+  .on("drag", dragmove));
+
+node.append("rect")
+  .attr("height", function (d) { return d.dy; })
+  .attr("width", sankey.nodeWidth())
+  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
+  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
+.append("title")
+  .text(function (d) { return d.name + "\n" + format(d.value); });
+
+node.append("text")
+  .attr("x", -6)
+  .attr("y", function (d) { return d.dy / 2; })
+  .attr("dy", ".35em")
+  .attr("text-anchor", "end")
+  .attr("transform", null)
+  .text(function (d) { return d.name; })
+.filter(function (d) { return d.x < params.width / 2; })
+  .attr("x", 6 + sankey.nodeWidth())
+  .attr("text-anchor", "start");
+
+// the function for moving the nodes
+  function dragmove(d) {
+    d3.select(this).attr("transform",
+        "translate(" + (
+                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
+                ) + "," + (
+                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
+                ) + ")");
+        sankey.relayout();
+        link.attr("d", path);
+  }
+})();
+</script>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-25" style="background:;">
+  <hgroup>
+    <h2>Investigating discrepancies with MiXCR</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>TRBV11-1 vs. TRBV7-9: short reads, non-unique alignments</h4>
+
+<p><br></p>
+
+<pre><code>&gt;&gt;&gt; Alignments with V gene:
+
+TRBV11-1*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+TRBV7-9*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-26" style="background:;">
+  <hgroup>
+    <h2>Investigating discrepancies with MiXCR</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>New idea: MiXCR with Trinity?</h4>
+
+<p><br></p>
+
+<ul>
+<li>Came up in discussions with Mike, Scott, Peter</li>
+<li>Input data for IMGT is actually assembled contigs produced by Trinity (not
+short reads)</li>
+<li>With help from Mike, modified MiXCR code to run on Trinity outputs instead of
+trimmed FASTQs (wasn&#39;t too hard - MiXCR allows FASTA file input)</li>
+<li>Compared new results</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-27" style="background:;">
+  <hgroup>
+    <h2>Developing a new approach for MiXCR</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>MiXCR with Trinity reproduces IMGT results</h4>
+
+<p><br></p>
+
+<div id = 'chart34b555718323' class = 'rChart d3_sankey'></div>
+
+<!--Attribution:
+Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
+Mike Bostock http://bost.ocks.org/mike/sankey/
+-->
+
+<script>
+(function(){
+var params = {
+ "dom": "chart34b555718323",
 "width":    800,
 "height":    550,
 "data": {
@@ -1168,353 +1268,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c017ea55c0f" 
-};
-
-params.units ? units = " " + params.units : units = "";
-
-//hard code these now but eventually make available
-var formatNumber = d3.format("0.1f"),    // zero decimal places
-    format = function(d) { return formatNumber(d) + units; },
-    color = d3.scale.category20();
-
-if(params.labelFormat){
-  formatNumber = d3.format(".2%");
-}
-
-var svg = d3.select('#' + params.id).append("svg")
-    .attr("width", params.width)
-    .attr("height", params.height);
-
-var sankey = d3.sankey()
-    .nodeWidth(params.nodeWidth)
-    .nodePadding(params.nodePadding)
-    .layout(params.layout)
-    .size([params.width,params.height]);
-
-var path = sankey.link();
-
-var data = params.data,
-    links = [],
-    nodes = [];
-
-//get all source and target into nodes
-//will reduce to unique in the next step
-//also get links in object form
-data.source.forEach(function (d, i) {
-    nodes.push({ "name": data.source[i] });
-    nodes.push({ "name": data.target[i] });
-    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
-});
-
-//now get nodes based on links data
-//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
-//this handy little function returns only the distinct / unique nodes
-nodes = d3.keys(d3.nest()
-                .key(function (d) { return d.name; })
-                .map(nodes));
-
-//it appears d3 with force layout wants a numeric source and target
-//so loop through each link replacing the text with its index from node
-links.forEach(function (d, i) {
-    links[i].source = nodes.indexOf(links[i].source);
-    links[i].target = nodes.indexOf(links[i].target);
-});
-
-//now loop through each nodes to make nodes an array of objects rather than an array of strings
-nodes.forEach(function (d, i) {
-    nodes[i] = { "name": d };
-});
-
-sankey
-  .nodes(nodes)
-  .links(links)
-  .layout(params.layout);
-
-var link = svg.append("g").selectAll(".link")
-  .data(links)
-.enter().append("path")
-  .attr("class", "link")
-  .attr("d", path)
-  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
-  .style('stroke', function(d){
-      if (format(d.value % 1) == 0.2) {
-        return('#56B4E9');
-      } else {
-        return('#E69F00');
-      }
-    })
-    .style('stroke-opacity', 0.5)
-    .on('mouseover', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.9)
-    })
-    .on('mouseout', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.5)
-    })
-  .sort(function (a, b) {
-      return (b.dy - a.dy);
-  });
-
-link.append("title")
-  .text(function (d) {
-      if (format(d.value % 1) == 0.2) {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
-      } else {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
-      }
-  });
-
-var node = svg.append("g").selectAll(".node")
-  .data(nodes)
-.enter().append("g")
-  .attr("class", "node")
-  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-.call(d3.behavior.drag()
-  .origin(function (d) { return d; })
-  .on("dragstart", function () { this.parentNode.appendChild(this); })
-  .on("drag", dragmove));
-
-node.append("rect")
-  .attr("height", function (d) { return d.dy; })
-  .attr("width", sankey.nodeWidth())
-  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
-  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
-.append("title")
-  .text(function (d) { return d.name + "\n" + format(d.value); });
-
-node.append("text")
-  .attr("x", -6)
-  .attr("y", function (d) { return d.dy / 2; })
-  .attr("dy", ".35em")
-  .attr("text-anchor", "end")
-  .attr("transform", null)
-  .text(function (d) { return d.name; })
-.filter(function (d) { return d.x < params.width / 2; })
-  .attr("x", 6 + sankey.nodeWidth())
-  .attr("text-anchor", "start");
-
-// the function for moving the nodes
-  function dragmove(d) {
-    d3.select(this).attr("transform",
-        "translate(" + (
-                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
-                ) + "," + (
-                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
-                ) + ")");
-        sankey.relayout();
-        link.attr("d", path);
-  }
-})();
-</script>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-26" style="background:;">
-  <hgroup>
-    <h2>Checking all</h2>
-  </hgroup>
-  <article data-timings="">
-    <div id = 'chart4c01426fdd31' class = 'rChart d3_sankey'></div>
-
-<!--Attribution:
-Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
-Mike Bostock http://bost.ocks.org/mike/sankey/
--->
-
-<script>
-(function(){
-var params = {
- "dom": "chart4c01426fdd31",
-"width":    800,
-"height":    550,
-"data": {
- "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1" ],
-"target": [ "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAVYGGATNKLIF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAVYGGATNKLIF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
-"value": [ 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2 ] 
-},
-"nodeWidth":     15,
-"nodePadding":     10,
-"layout":     32,
-"id": "chart4c01426fdd31" 
-};
-
-params.units ? units = " " + params.units : units = "";
-
-//hard code these now but eventually make available
-var formatNumber = d3.format("0.1f"),    // zero decimal places
-    format = function(d) { return formatNumber(d) + units; },
-    color = d3.scale.category20();
-
-if(params.labelFormat){
-  formatNumber = d3.format(".2%");
-}
-
-var svg = d3.select('#' + params.id).append("svg")
-    .attr("width", params.width)
-    .attr("height", params.height);
-
-var sankey = d3.sankey()
-    .nodeWidth(params.nodeWidth)
-    .nodePadding(params.nodePadding)
-    .layout(params.layout)
-    .size([params.width,params.height]);
-
-var path = sankey.link();
-
-var data = params.data,
-    links = [],
-    nodes = [];
-
-//get all source and target into nodes
-//will reduce to unique in the next step
-//also get links in object form
-data.source.forEach(function (d, i) {
-    nodes.push({ "name": data.source[i] });
-    nodes.push({ "name": data.target[i] });
-    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
-});
-
-//now get nodes based on links data
-//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
-//this handy little function returns only the distinct / unique nodes
-nodes = d3.keys(d3.nest()
-                .key(function (d) { return d.name; })
-                .map(nodes));
-
-//it appears d3 with force layout wants a numeric source and target
-//so loop through each link replacing the text with its index from node
-links.forEach(function (d, i) {
-    links[i].source = nodes.indexOf(links[i].source);
-    links[i].target = nodes.indexOf(links[i].target);
-});
-
-//now loop through each nodes to make nodes an array of objects rather than an array of strings
-nodes.forEach(function (d, i) {
-    nodes[i] = { "name": d };
-});
-
-sankey
-  .nodes(nodes)
-  .links(links)
-  .layout(params.layout);
-
-var link = svg.append("g").selectAll(".link")
-  .data(links)
-.enter().append("path")
-  .attr("class", "link")
-  .attr("d", path)
-  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
-  .style('stroke', function(d){
-      if (format(d.value % 1) == 0.2) {
-        return('#56B4E9');
-      } else {
-        return('#E69F00');
-      }
-    })
-    .style('stroke-opacity', 0.5)
-    .on('mouseover', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.9)
-    })
-    .on('mouseout', function(d){
-      d3.select(this)
-        .style('stroke-opacity', 0.5)
-    })
-  .sort(function (a, b) {
-      return (b.dy - a.dy);
-  });
-
-link.append("title")
-  .text(function (d) {
-      if (format(d.value % 1) == 0.2) {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
-      } else {
-          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
-      }
-  });
-
-var node = svg.append("g").selectAll(".node")
-  .data(nodes)
-.enter().append("g")
-  .attr("class", "node")
-  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-.call(d3.behavior.drag()
-  .origin(function (d) { return d; })
-  .on("dragstart", function () { this.parentNode.appendChild(this); })
-  .on("drag", dragmove));
-
-node.append("rect")
-  .attr("height", function (d) { return d.dy; })
-  .attr("width", sankey.nodeWidth())
-  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
-  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
-.append("title")
-  .text(function (d) { return d.name + "\n" + format(d.value); });
-
-node.append("text")
-  .attr("x", -6)
-  .attr("y", function (d) { return d.dy / 2; })
-  .attr("dy", ".35em")
-  .attr("text-anchor", "end")
-  .attr("transform", null)
-  .text(function (d) { return d.name; })
-.filter(function (d) { return d.x < params.width / 2; })
-  .attr("x", 6 + sankey.nodeWidth())
-  .attr("text-anchor", "start");
-
-// the function for moving the nodes
-  function dragmove(d) {
-    d3.select(this).attr("transform",
-        "translate(" + (
-                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
-                ) + "," + (
-                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
-                ) + ")");
-        sankey.relayout();
-        link.attr("d", path);
-  }
-})();
-</script>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-27" style="background:;">
-  <hgroup>
-    <h2>Case 3: P48</h2>
-  </hgroup>
-  <article data-timings="">
-    <pre><code>Warning: 4 problems parsing &#39;data/P91/P48_compiled_mixcr_output.txt&#39;. See
-problems(...) for more details.
-</code></pre>
-
-<div id = 'chart4c0140d63ec3' class = 'rChart d3_sankey'></div>
-
-<!--Attribution:
-Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
-Mike Bostock http://bost.ocks.org/mike/sankey/
--->
-
-<script>
-(function(){
-var params = {
- "dom": "chart4c0140d63ec3",
-"width":    800,
-"height":    550,
-"data": {
- "source": [ "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1" ],
-"target": [ "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF" ],
-"value": [ 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2 ] 
-},
-"nodeWidth":     15,
-"nodePadding":     10,
-"layout":     32,
-"id": "chart4c0140d63ec3" 
+"id": "chart34b555718323" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1661,26 +1415,14 @@ node.append("text")
 
 <slide class="" id="slide-28" style="background:;">
   <hgroup>
-    <h2>Allowing multiple TRAV</h2>
+    <h2>Developing a new approach for MiXCR</h2>
   </hgroup>
   <article data-timings="">
-    <p><link rel='stylesheet' href=http://timelyportfolio.github.io/rCharts_d3_sankey/css/sankey.css></p>
+    <h4>Not just \beta chain - results match for both TRAV and TRBV</h4>
 
-<script type='text/javascript' src=http://d3js.org/d3.v3.min.js></script>
+<p><br></p>
 
-<script type='text/javascript' src=http://timelyportfolio.github.io/rCharts_d3_sankey/js/sankey.js></script> 
-
-<p><style>
-  .rChart {
-    display: block;
-    margin-left: auto; 
-    margin-right: auto;
-    width: 800px;
-    height: 550px;
-  }<br>
-  </style></p>
-
-<div id = 'chart4c011628f039' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b54fe86ab0' class = 'rChart d3_sankey'></div>
 
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
@@ -1690,18 +1432,18 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c011628f039",
+ "dom": "chart34b54fe86ab0",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
- "source": [ "lib2268", "lib2268", "lib2269", "lib2269", "lib2366", "lib2366", "lib2367", "lib2367", "lib2368", "lib2368", "lib2372", "lib2372", "lib2373", "lib2373", "lib2377", "lib2377", "lib2378", "lib2378", "lib2268", "lib2268", "lib2366", "lib2366", "lib2367", "lib2367", "lib2368", "lib2368", "lib2372", "lib2372", "lib2373", "lib2373", "lib2377", "lib2377", "lib2378", "lib2378", "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1" ],
-"target": [ "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF" ],
-"value": [ 2268.1, 2268.1, 2269.1, 2269.1, 2366.1, 2366.1, 2367.1, 2367.1, 2368.1, 2368.1, 2372.1, 2372.1, 2373.1, 2373.1, 2377.1, 2377.1, 2378.1, 2378.1, 2268.2, 2268.2, 2366.2, 2366.2, 2367.2, 2367.2, 2368.2, 2368.2, 2372.2, 2372.2, 2373.2, 2373.2, 2377.2, 2377.2, 2378.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2268.1, 2269.1, 2269.1, 2366.1, 2366.1, 2367.1, 2367.1, 2368.1, 2368.1, 2372.1, 2372.1, 2373.1, 2373.1, 2377.1, 2377.1, 2378.1, 2378.1, 2268.2, 2268.2, 2366.2, 2366.2, 2367.2, 2367.2, 2368.2, 2368.2, 2372.2, 2372.2, 2373.2, 2373.2, 2377.2, 2377.2, 2378.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2 ] 
+ "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1" ],
+"target": [ "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAVYGGATNKLIF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAVYGGATNKLIF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
+"value": [ 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2, 8472.1, 8474.1, 8451.1, 8453.1, 8493.1, 8444.1, 8445.1, 8482.1, 8485.1, 8488.1, 8464.1, 8467.1, 8449.1, 8444.2, 8445.2, 8449.2, 8451.2, 8453.2, 8464.2, 8467.2, 8472.2, 8474.2, 8482.2, 8485.2, 8488.2, 8493.2 ] 
 },
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c011628f039" 
+"id": "chart34b54fe86ab0" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1848,6 +1590,383 @@ node.append("text")
 
 <slide class="" id="slide-29" style="background:;">
   <hgroup>
+    <h2>Insights &amp; advice from the MiLabratory</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Following up with the developers of MiXCR</h4>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-30" style="background:;">
+  <hgroup>
+    <h2>Investigating discrepancies with MiXCR</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Revisiting read length in MiXCR clonotype identification</h4>
+
+<p><br></p>
+
+<ul>
+<li>Bulk libraries from project P48</li>
+</ul>
+
+<div id = 'chart34b574381776' class = 'rChart d3_sankey'></div>
+
+<!--Attribution:
+Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
+Mike Bostock http://bost.ocks.org/mike/sankey/
+-->
+
+<script>
+(function(){
+var params = {
+ "dom": "chart34b574381776",
+"width":    800,
+"height":    550,
+"data": {
+ "source": [ "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1" ],
+"target": [ "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRAV19", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF" ],
+"value": [ 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2 ] 
+},
+"nodeWidth":     15,
+"nodePadding":     10,
+"layout":     32,
+"id": "chart34b574381776" 
+};
+
+params.units ? units = " " + params.units : units = "";
+
+//hard code these now but eventually make available
+var formatNumber = d3.format("0.1f"),    // zero decimal places
+    format = function(d) { return formatNumber(d) + units; },
+    color = d3.scale.category20();
+
+if(params.labelFormat){
+  formatNumber = d3.format(".2%");
+}
+
+var svg = d3.select('#' + params.id).append("svg")
+    .attr("width", params.width)
+    .attr("height", params.height);
+
+var sankey = d3.sankey()
+    .nodeWidth(params.nodeWidth)
+    .nodePadding(params.nodePadding)
+    .layout(params.layout)
+    .size([params.width,params.height]);
+
+var path = sankey.link();
+
+var data = params.data,
+    links = [],
+    nodes = [];
+
+//get all source and target into nodes
+//will reduce to unique in the next step
+//also get links in object form
+data.source.forEach(function (d, i) {
+    nodes.push({ "name": data.source[i] });
+    nodes.push({ "name": data.target[i] });
+    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
+});
+
+//now get nodes based on links data
+//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
+//this handy little function returns only the distinct / unique nodes
+nodes = d3.keys(d3.nest()
+                .key(function (d) { return d.name; })
+                .map(nodes));
+
+//it appears d3 with force layout wants a numeric source and target
+//so loop through each link replacing the text with its index from node
+links.forEach(function (d, i) {
+    links[i].source = nodes.indexOf(links[i].source);
+    links[i].target = nodes.indexOf(links[i].target);
+});
+
+//now loop through each nodes to make nodes an array of objects rather than an array of strings
+nodes.forEach(function (d, i) {
+    nodes[i] = { "name": d };
+});
+
+sankey
+  .nodes(nodes)
+  .links(links)
+  .layout(params.layout);
+
+var link = svg.append("g").selectAll(".link")
+  .data(links)
+.enter().append("path")
+  .attr("class", "link")
+  .attr("d", path)
+  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
+  .style('stroke', function(d){
+      if (format(d.value % 1) == 0.2) {
+        return('#56B4E9');
+      } else {
+        return('#E69F00');
+      }
+    })
+    .style('stroke-opacity', 0.5)
+    .on('mouseover', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.9)
+    })
+    .on('mouseout', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.5)
+    })
+  .sort(function (a, b) {
+      return (b.dy - a.dy);
+  });
+
+link.append("title")
+  .text(function (d) {
+      if (format(d.value % 1) == 0.2) {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
+      } else {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
+      }
+  });
+
+var node = svg.append("g").selectAll(".node")
+  .data(nodes)
+.enter().append("g")
+  .attr("class", "node")
+  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+.call(d3.behavior.drag()
+  .origin(function (d) { return d; })
+  .on("dragstart", function () { this.parentNode.appendChild(this); })
+  .on("drag", dragmove));
+
+node.append("rect")
+  .attr("height", function (d) { return d.dy; })
+  .attr("width", sankey.nodeWidth())
+  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
+  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
+.append("title")
+  .text(function (d) { return d.name + "\n" + format(d.value); });
+
+node.append("text")
+  .attr("x", -6)
+  .attr("y", function (d) { return d.dy / 2; })
+  .attr("dy", ".35em")
+  .attr("text-anchor", "end")
+  .attr("transform", null)
+  .text(function (d) { return d.name; })
+.filter(function (d) { return d.x < params.width / 2; })
+  .attr("x", 6 + sankey.nodeWidth())
+  .attr("text-anchor", "start");
+
+// the function for moving the nodes
+  function dragmove(d) {
+    d3.select(this).attr("transform",
+        "translate(" + (
+                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
+                ) + "," + (
+                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
+                ) + ")");
+        sankey.relayout();
+        link.attr("d", path);
+  }
+})();
+</script>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-31" style="background:;">
+  <hgroup>
+    <h2>Allowing multiple TRAV</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><link rel='stylesheet' href=http://timelyportfolio.github.io/rCharts_d3_sankey/css/sankey.css></p>
+
+<script type='text/javascript' src=http://d3js.org/d3.v3.min.js></script>
+
+<script type='text/javascript' src=http://timelyportfolio.github.io/rCharts_d3_sankey/js/sankey.js></script> 
+
+<p><style>
+  .rChart {
+    display: block;
+    margin-left: auto; 
+    margin-right: auto;
+    width: 800px;
+    height: 550px;
+  }<br>
+  </style></p>
+
+<div id = 'chart34b5107a01c1' class = 'rChart d3_sankey'></div>
+
+<!--Attribution:
+Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
+Mike Bostock http://bost.ocks.org/mike/sankey/
+-->
+
+<script>
+(function(){
+var params = {
+ "dom": "chart34b5107a01c1",
+"width":    800,
+"height":    550,
+"data": {
+ "source": [ "lib2268", "lib2268", "lib2269", "lib2269", "lib2366", "lib2366", "lib2367", "lib2367", "lib2368", "lib2368", "lib2372", "lib2372", "lib2373", "lib2373", "lib2377", "lib2377", "lib2378", "lib2378", "lib2268", "lib2268", "lib2366", "lib2366", "lib2367", "lib2367", "lib2368", "lib2368", "lib2372", "lib2372", "lib2373", "lib2373", "lib2377", "lib2377", "lib2378", "lib2378", "lib2268", "lib2269", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "lib2268", "lib2366", "lib2367", "lib2368", "lib2372", "lib2373", "lib2377", "lib2378", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1" ],
+"target": [ "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV8-3", "TRAV19", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRAV19", "TRAV8-3", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "TRBV5-1", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CALSENRGGTASKLTF", "CALQTGANNLFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF", "CASSLVGGPSSEAFF" ],
+"value": [ 2268.1, 2268.1, 2269.1, 2269.1, 2366.1, 2366.1, 2367.1, 2367.1, 2368.1, 2368.1, 2372.1, 2372.1, 2373.1, 2373.1, 2377.1, 2377.1, 2378.1, 2378.1, 2268.2, 2268.2, 2366.2, 2366.2, 2367.2, 2367.2, 2368.2, 2368.2, 2372.2, 2372.2, 2373.2, 2373.2, 2377.2, 2377.2, 2378.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2, 2268.1, 2268.1, 2269.1, 2269.1, 2366.1, 2366.1, 2367.1, 2367.1, 2368.1, 2368.1, 2372.1, 2372.1, 2373.1, 2373.1, 2377.1, 2377.1, 2378.1, 2378.1, 2268.2, 2268.2, 2366.2, 2366.2, 2367.2, 2367.2, 2368.2, 2368.2, 2372.2, 2372.2, 2373.2, 2373.2, 2377.2, 2377.2, 2378.2, 2378.2, 2268.1, 2269.1, 2366.1, 2367.1, 2368.1, 2372.1, 2373.1, 2377.1, 2378.1, 2268.2, 2366.2, 2367.2, 2368.2, 2372.2, 2373.2, 2377.2, 2378.2 ] 
+},
+"nodeWidth":     15,
+"nodePadding":     10,
+"layout":     32,
+"id": "chart34b5107a01c1" 
+};
+
+params.units ? units = " " + params.units : units = "";
+
+//hard code these now but eventually make available
+var formatNumber = d3.format("0.1f"),    // zero decimal places
+    format = function(d) { return formatNumber(d) + units; },
+    color = d3.scale.category20();
+
+if(params.labelFormat){
+  formatNumber = d3.format(".2%");
+}
+
+var svg = d3.select('#' + params.id).append("svg")
+    .attr("width", params.width)
+    .attr("height", params.height);
+
+var sankey = d3.sankey()
+    .nodeWidth(params.nodeWidth)
+    .nodePadding(params.nodePadding)
+    .layout(params.layout)
+    .size([params.width,params.height]);
+
+var path = sankey.link();
+
+var data = params.data,
+    links = [],
+    nodes = [];
+
+//get all source and target into nodes
+//will reduce to unique in the next step
+//also get links in object form
+data.source.forEach(function (d, i) {
+    nodes.push({ "name": data.source[i] });
+    nodes.push({ "name": data.target[i] });
+    links.push({ "source": data.source[i], "target": data.target[i], "value": +data.value[i] });
+});
+
+//now get nodes based on links data
+//thanks Mike Bostock https://groups.google.com/d/msg/d3-js/pl297cFtIQk/Eso4q_eBu1IJ
+//this handy little function returns only the distinct / unique nodes
+nodes = d3.keys(d3.nest()
+                .key(function (d) { return d.name; })
+                .map(nodes));
+
+//it appears d3 with force layout wants a numeric source and target
+//so loop through each link replacing the text with its index from node
+links.forEach(function (d, i) {
+    links[i].source = nodes.indexOf(links[i].source);
+    links[i].target = nodes.indexOf(links[i].target);
+});
+
+//now loop through each nodes to make nodes an array of objects rather than an array of strings
+nodes.forEach(function (d, i) {
+    nodes[i] = { "name": d };
+});
+
+sankey
+  .nodes(nodes)
+  .links(links)
+  .layout(params.layout);
+
+var link = svg.append("g").selectAll(".link")
+  .data(links)
+.enter().append("path")
+  .attr("class", "link")
+  .attr("d", path)
+  .style("stroke-width", function (d) { return Math.max(1, d.dy); })
+  .style('stroke', function(d){
+      if (format(d.value % 1) == 0.2) {
+        return('#56B4E9');
+      } else {
+        return('#E69F00');
+      }
+    })
+    .style('stroke-opacity', 0.5)
+    .on('mouseover', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.9)
+    })
+    .on('mouseout', function(d){
+      d3.select(this)
+        .style('stroke-opacity', 0.5)
+    })
+  .sort(function (a, b) {
+      return (b.dy - a.dy);
+  });
+
+link.append("title")
+  .text(function (d) {
+      if (format(d.value % 1) == 0.2) {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [MiXCR only]";
+      } else {
+          return d.source.name + " → " + d.target.name + "\nlib" + parseInt(format(d.value)) + " [Trinity+MiXCR]";
+      }
+  });
+
+var node = svg.append("g").selectAll(".node")
+  .data(nodes)
+.enter().append("g")
+  .attr("class", "node")
+  .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+.call(d3.behavior.drag()
+  .origin(function (d) { return d; })
+  .on("dragstart", function () { this.parentNode.appendChild(this); })
+  .on("drag", dragmove));
+
+node.append("rect")
+  .attr("height", function (d) { return d.dy; })
+  .attr("width", sankey.nodeWidth())
+  .style("fill", "#666666") //function (d) { return d.color = color(d.name.replace(/ .*/, "")); })
+  .style("stroke", "#333333") //function (d) { return d3.rgb(d.color).darker(2); })
+.append("title")
+  .text(function (d) { return d.name + "\n" + format(d.value); });
+
+node.append("text")
+  .attr("x", -6)
+  .attr("y", function (d) { return d.dy / 2; })
+  .attr("dy", ".35em")
+  .attr("text-anchor", "end")
+  .attr("transform", null)
+  .text(function (d) { return d.name; })
+.filter(function (d) { return d.x < params.width / 2; })
+  .attr("x", 6 + sankey.nodeWidth())
+  .attr("text-anchor", "start");
+
+// the function for moving the nodes
+  function dragmove(d) {
+    d3.select(this).attr("transform",
+        "translate(" + (
+                   d.x = Math.max(0, Math.min(params.width - d.dx, d3.event.x))
+                ) + "," + (
+                   d.y = Math.max(0, Math.min(params.height - d.dy, d3.event.y))
+                ) + ")");
+        sankey.relayout();
+        link.attr("d", path);
+  }
+})();
+</script>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-32" style="background:;">
+  <hgroup>
     <h2>Remaining questions</h2>
   </hgroup>
   <article data-timings="">
@@ -1856,7 +1975,7 @@ node.append("text")
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-30" style="background:;">
+<slide class="" id="slide-33" style="background:;">
   <hgroup>
     <h2>VDJtools</h2>
   </hgroup>
@@ -1866,7 +1985,7 @@ node.append("text")
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-31" style="background:;">
+<slide class="" id="slide-34" style="background:;">
   <hgroup>
     <h2>Acknowledgements</h2>
   </hgroup>
@@ -1894,7 +2013,7 @@ node.append("text")
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='TCR-seq workflow'>
+        data-slide=3 title='TCR-seq: gene quantification &amp; clonotype identification'>
          3
       </a>
     </li>
@@ -1954,7 +2073,7 @@ node.append("text")
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=13 title='Investigating discrepancies with MiXCR'>
+        data-slide=13 title='Working with clonotype data in <code>R</code>'>
          13
       </a>
     </li>
@@ -1972,98 +2091,116 @@ node.append("text")
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=16 title='Case 2: P91'>
+        data-slide=16 title='Investigating discrepancies with MiXCR'>
          16
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=17 title='MiXCR (with short reads) vs. IMGT'>
+        data-slide=17 title='Investigating discrepancies with MiXCR'>
          17
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=18 title='Constructing &amp; inspecting TCRs'>
+        data-slide=18 title='Taking a closer look at P91'>
          18
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=19 title='Constructing TCRs with MiXCR - selecting junctions'>
+        data-slide=19 title='Working with clonotype data in <code>R</code>'>
          19
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=20 title='Visualizing TCRs with Sankey diagrams'>
+        data-slide=20 title='Working with clonotype data in <code>R</code>'>
          20
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=21 title='Sankey again...'>
+        data-slide=21 title='Working with clonotype data in <code>R</code>'>
          21
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=22 title='B chain only'>
+        data-slide=22 title='Working with clonotype data in <code>R</code>'>
          22
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=23 title='Differences only'>
+        data-slide=23 title='Working with clonotype data in <code>R</code>'>
          23
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=24 title='MiXCR with Trinity'>
+        data-slide=24 title='Investigating discrepancies with MiXCR'>
          24
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=25 title='How&#39;d we do?'>
+        data-slide=25 title='Investigating discrepancies with MiXCR'>
          25
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=26 title='Checking all'>
+        data-slide=26 title='Investigating discrepancies with MiXCR'>
          26
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=27 title='Case 3: P48'>
+        data-slide=27 title='Developing a new approach for MiXCR'>
          27
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=28 title='Allowing multiple TRAV'>
+        data-slide=28 title='Developing a new approach for MiXCR'>
          28
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=29 title='Remaining questions'>
+        data-slide=29 title='Insights &amp; advice from the MiLabratory'>
          29
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=30 title='VDJtools'>
+        data-slide=30 title='Investigating discrepancies with MiXCR'>
          30
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=31 title='Acknowledgements'>
+        data-slide=31 title='Allowing multiple TRAV'>
          31
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=32 title='Remaining questions'>
+         32
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=33 title='VDJtools'>
+         33
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=34 title='Acknowledgements'>
+         34
       </a>
     </li>
   </ul>

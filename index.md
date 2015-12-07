@@ -33,6 +33,9 @@ $(function() {
 strong {
   font-weight: bold;
 }
+em {
+  font-style: italic
+}
 </style>
 
 
@@ -47,8 +50,8 @@ strong {
 
 ---  
 
-## TCR-seq workflow
-#### RNA-seq processing for clonotype identification 
+## TCR-seq: gene quantification & clonotype identification 
+#### C1 RNA-seq Galaxy workflow developed by Mike Mason et al.
 <br>
 
 ![imgt_workflow](images/imgt_workflow.png)
@@ -62,14 +65,14 @@ strong {
 > * Very fast, accurate alignment of reads to CDR3 (and other T-, B-cell 
 features)  
 > * Runs locally, without need for **Trinity** transcriptome assembly
-> * Found, implemented, & tested by Mike Mason
-> * Produced very similar results to IMGT V-QUEST in initial testing (later,
+> * Found, implemented, & tested by Mike
+> * Produced very similar results to **IMGT V-QUEST** in initial testing (later,
 we encountered some discrepancies related to input data)
 
 ---  
 
 ## Plugging in MiXCR
-#### Improving pipeline performance & reliability
+#### Potential modifications to improve pipeline performance & reliability
 <br>
 
 ![mixcr_workflow](images/mixcr_workflow.png)
@@ -86,7 +89,7 @@ in number of functional junctions identified
 > * Overlap in these cases appears highly dependent on cutoff used for
 `clone count` metric
 > * For some of the problematic projects, MiXCR was run by me instead of Mike
-> * Projects were also processed in Galaxy at different times
+> * Projects were also processed in **Galaxy** at different times
 
 ---  
 
@@ -95,6 +98,14 @@ in number of functional junctions identified
 <br>
 
 ![mixcr_diff](images/mixcr_diff.png)
+
+---
+
+## Working with clonotype data in `R`
+#### New code to save time/effort for testing & analysis
+<br>
+
+![tcrseq_repo](images/tcrseq_repo.png)
 
 ---  
 
@@ -198,11 +209,12 @@ imgt <- format_imgt_jxns(imgt_file) %>% # read and filter IMGT junctions
 + **Duplicate removal:** yes or no
 + **Read length:** 100bp (long) vs. 58bp (short)
 
-**Testing:** used RNA-seq data from [INSERT_FLOWCELL_HERE]: 100bp reads
+**Testing:** used RNA-seq data from flowcell C4WYJACXX (8/12/2014): 100bp reads
 
 + selected 20 samples  
 + manually simulated shorter reads for same set of samples  
-+ varied other parameters  
++ varied other parameters (updated Mike's code for running MiXCR to include
+options for read trimming, duplicate filtering, etc. - independent of Galaxy)
 + ran both MiXCR & IMGT (bonus function: `compile_imgt_output()`)  
 
 
@@ -219,179 +231,118 @@ imgt <- format_imgt_jxns(imgt_file) %>% # read and filter IMGT junctions
 
 ---
 
-## Case 2: P91
+## Investigating discrepancies with MiXCR
+#### Examining inconsistencies in final TCR clonotypes
+<br>
+
++ For libraries from project P91 (T1D), MiXCR assigned different \alpha-\beta 
+(sometimes junctions, sometimes genes) combinations than IMGT V-QUEST  
++ Clonotypes from MiXCR highly dependent on clone count
 
 ![p91_circos](images/circos.png)
 
 ---
 
-## MiXCR (with short reads) vs. IMGT
+## Taking a closer look at P91
+#### Tracking down the source of clonotype mismatches
+<br>
+
++ Compared MiXCR and IMGT outputs for project P91-11
++ Used a 'moderate' clone count cutoff of **10**
++ When results disagreed, looked both at final clonotype outputs from MiXCR
+as well as intermediate results (i.e., alignments)
 
 
 
+More new code! (for dealing with more TCR-related tasks)
 
+```r
+source("R/inspect_tcrs.R")
+```
 
 ---
 
-## Constructing & inspecting TCRs
+## Working with clonotype data in `R`
+#### Constructing & inspecting TCRs from IMGT outputs
+<br>
 
 
 ```r
-# Combine TRAV and TRBV junctions to construct TCRs
+# combine TRAV and TRBV junctions for each library to construct TCRs
 p91_imgt[["tcrs"]] <- p91_imgt$jxns %>% 
     construct_tcrs()
 ```
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:left;"> trav_gene </th>
-   <th style="text-align:left;"> trav_jxn </th>
-   <th style="text-align:left;"> trbv_gene </th>
-   <th style="text-align:left;"> trbv_jxn </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib8472 </td>
-   <td style="text-align:left;"> TRAV25 </td>
-   <td style="text-align:left;"> CAGQTGANNLFF </td>
-   <td style="text-align:left;"> TRBV4-3 </td>
-   <td style="text-align:left;"> CASSQEVGTVPNQPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8474 </td>
-   <td style="text-align:left;"> TRAV12-3 </td>
-   <td style="text-align:left;"> CAMSRILTGGGNKLTF </td>
-   <td style="text-align:left;"> TRBV7-2 </td>
-   <td style="text-align:left;"> CASSFPSSPLHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8451 </td>
-   <td style="text-align:left;"> TRAV25 </td>
-   <td style="text-align:left;"> CAGQTGANNLFF </td>
-   <td style="text-align:left;"> TRBV4-3 </td>
-   <td style="text-align:left;"> CASSQEVGTVPNQPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8453 </td>
-   <td style="text-align:left;"> TRAV16 </td>
-   <td style="text-align:left;"> CALLKGSGAGSYQLTF </td>
-   <td style="text-align:left;"> TRBV20-1 </td>
-   <td style="text-align:left;"> CSAPRGASGGSSYNEQFF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8493 </td>
-   <td style="text-align:left;"> TRAV8-4 </td>
-   <td style="text-align:left;"> CAVYGGATNKLIF </td>
-   <td style="text-align:left;"> TRBV5-1 </td>
-   <td style="text-align:left;"> CASSLDPGPNEQFF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV7-9 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-</tbody>
-</table>
+
+|lib_id  |trav_gene |trav_jxn         |trbv_gene |trbv_jxn           |
+|:-------|:---------|:----------------|:---------|:------------------|
+|lib8472 |TRAV25    |CAGQTGANNLFF     |TRBV4-3   |CASSQEVGTVPNQPQHF  |
+|lib8474 |TRAV12-3  |CAMSRILTGGGNKLTF |TRBV7-2   |CASSFPSSPLHF       |
+|lib8451 |TRAV25    |CAGQTGANNLFF     |TRBV4-3   |CASSQEVGTVPNQPQHF  |
+|lib8453 |TRAV16    |CALLKGSGAGSYQLTF |TRBV20-1  |CSAPRGASGGSSYNEQFF |
+|lib8493 |TRAV8-4   |CAVYGGATNKLIF    |TRBV5-1   |CASSLDPGPNEQFF     |
 
 ---
 
-## Constructing TCRs with MiXCR - selecting junctions 
+## Working with clonotype data in `R`
+#### Constructing TCRs with MiXCR: selecting top junctions 
+<br>
 
 
 ```r
+# for each library, sort junctions first by clone count then by alignment score 
+# to select top junction sequence and top corresponding V gene hit for both the
+# alpha and beta chain
 p91_mixcr[["tcrs"]] <- p91_mixcr$jxns %>% 
-    select_top_jxns() %>% 
+    select_top_jxns() %>% # return only top TRAV and TRBV for each library
     construct_tcrs()
 ```
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:left;"> trav_gene </th>
-   <th style="text-align:left;"> trav_jxn </th>
-   <th style="text-align:left;"> trbv_gene </th>
-   <th style="text-align:left;"> trbv_jxn </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib8443 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-   <td style="text-align:left;"> TRBV7-8 </td>
-   <td style="text-align:left;"> CASSATGEPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8443 </td>
-   <td style="text-align:left;"> TRAV13-2 </td>
-   <td style="text-align:left;"> CALSSFMF </td>
-   <td style="text-align:left;"> TRBV7-8 </td>
-   <td style="text-align:left;"> CASSATGEPQHF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8444 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8445 </td>
-   <td style="text-align:left;"> TRAV26-2 </td>
-   <td style="text-align:left;"> CILRDTISNFGNEKLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib8445 </td>
-   <td style="text-align:left;"> TRAV12-3 </td>
-   <td style="text-align:left;"> CAMNNENARLLTF </td>
-   <td style="text-align:left;"> TRBV11-1 </td>
-   <td style="text-align:left;"> CASSFGSSYYGYTF </td>
-  </tr>
-</tbody>
-</table>
+
+|lib_id  |trav_gene |trav_jxn          |trbv_gene |trbv_jxn          |
+|:-------|:---------|:-----------------|:---------|:-----------------|
+|lib8445 |TRAV26-2  |CILRDTISNFGNEKLTF |TRBV11-1  |CASSFGSSYYGYTF    |
+|lib8449 |TRAV26-2  |CILRDTISNFGNEKLTF |TRBV11-1  |CASSFGSSYYGYTF    |
+|lib8451 |TRAV25    |CAGQTGANNLFF      |TRBV4-3   |CASSQEVGTVPNQPQHF |
+|lib8462 |TRAV8-7   |CAGADRLQTGMRGAF   |TRBV9     |CASSTRQNQPQHF     |
+|lib8464 |TRAV25    |CAGQTGANNLFF      |TRBV12-1  |CEKHNFVF          |
 
 ---
 
-## Visualizing TCRs with Sankey diagrams
+## Working with clonotype data in `R`
+#### Visualizing TCRs with Sankey diagrams
+<br>
+
++ Circos plots look cool, but aren't as informative for troubleshooting
++ I also don't have a good way to generate them on the fly...
++ Wanted a way to quickly inspect the connections between libraries, V genes,
+and junctions: [Sankey diagrams](http://bost.ocks.org/mike/sankey/) (and **d3** 
+- oooo..)!
 
 
 ```r
-# setwd("/Users/jaeddy/code/github/presentations/labMtg_dec2015/")
-# Combine IMGT and MiXCR TCRs
+# combine IMGT and MiXCR TCRs
 imgt_mixcr <- p91_imgt$tcrs %>% 
     mutate(tcr_source = "IMGT") %>% 
     bind_rows(p91_mixcr$tcrs %>% 
                   mutate(tcr_source = "MiXCR")) %>% 
     list(tcrs = .)
 
-# Construct and display a sankey network linking libs to genes to junctions
+# construct and display a sankey network linking libs to genes to junctions
 imgt_mixcr[["plot"]] <- 
     build_sankey_network(imgt_mixcr$tcrs, 
                          chain = "both") %>% 
-    build_sankey_plot(sankey_height = 550)
+    build_sankey_plot(sankey_height = 500)
 ```
 
 ---
 
-## Sankey again...
+## Working with clonotype data in `R`
+#### Viewing all TCR relationships for P91 libraries
+<br>
 
 
-<div id = 'chart4c0169277a27' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b5351029fb' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -400,9 +351,9 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c0169277a27",
+ "dom": "chart34b5351029fb",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
  "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV8-7", "TRAV25", "TRAV26-2", "TRAV12-3", "TRAV12-3", "TRAV25", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1" ],
 "target": [ "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV8-7", "TRAV25", "TRAV26-2", "TRAV12-3", "TRAV12-3", "TRAV25", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAVYGGATNKLIF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CAGADRLQTGMRGAF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CAMSRILTGGGNKLTF", "CAMNNENARLLTF", "CAGQTGANNLFF", "CVVSDRGSTLGRLYF", "CAVYGGATNKLIF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSTRQNQPQHF", "CEKHNFVF", "CASSFGSSYYGYTF", "CASSFPSSPLHF", "CASRSTGTGGAYGYTF", "CASSQEVGTVPNQPQHF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
@@ -411,7 +362,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c0169277a27" 
+"id": "chart34b5351029fb" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -554,12 +505,14 @@ node.append("text")
 
 --- 
 
-## B chain only
+## Working with clonotype data in `R`
+#### Viewing only \beta chain for P91 libraries
+<br>
 
 
  
 
-<div id = 'chart4c0169de3f1c' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b5216d7e03' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -568,9 +521,9 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c0169de3f1c",
+ "dom": "chart34b5216d7e03",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
  "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8445", "lib8449", "lib8451", "lib8462", "lib8464", "lib8467", "lib8474", "lib8480", "lib8482", "lib8488", "lib8493", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1" ],
 "target": [ "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV11-1", "TRBV11-1", "TRBV4-3", "TRBV9", "TRBV12-1", "TRBV11-1", "TRBV11-3", "TRBV6-3", "TRBV4-3", "TRBV25-1", "TRBV5-1", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSTRQNQPQHF", "CEKHNFVF", "CASSFGSSYYGYTF", "CASSFPSSPLHF", "CASRSTGTGGAYGYTF", "CASSQEVGTVPNQPQHF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
@@ -579,7 +532,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c0169de3f1c" 
+"id": "chart34b5216d7e03" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -722,12 +675,14 @@ node.append("text")
 
 --- 
 
-## Differences only
+## Investigating discrepancies with MiXCR
+#### Looking only at different TRBV gene/junction assignments
+<br>
 
 
 
 
-<div id = 'chart4c017ccce8c5' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b533e0eabb' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -736,9 +691,9 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c017ccce8c5",
+ "dom": "chart34b533e0eabb",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
  "source": [ "lib8449", "lib8467", "lib8464", "lib8485", "lib8445", "lib8444", "lib8453", "lib8474", "lib8472", "lib8480", "lib8474", "lib8467", "lib8464", "lib8462", "lib8449", "lib8445", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1" ],
 "target": [ "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV7-9", "TRBV7-9", "TRBV20-1", "TRBV7-2", "TRBV4-3", "TRBV6-3", "TRBV11-3", "TRBV11-1", "TRBV12-1", "TRBV9", "TRBV11-1", "TRBV11-1", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CSAPRGASGGSSYNEQFF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASRSTGTGGAYGYTF", "CASSFPSSPLHF", "CASSFGSSYYGYTF", "CEKHNFVF", "CASSTRQNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF" ],
@@ -747,7 +702,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c017ccce8c5" 
+"id": "chart34b533e0eabb" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -890,25 +845,55 @@ node.append("text")
 
 --- 
 
-## MiXCR with Trinity
+## Investigating discrepancies with MiXCR
+#### TRBV11-1 vs. TRBV7-9: short reads, non-unique alignments
+<br>
 
-
-
-
-```r
-p91_mixcr_trinity[["tcrs"]] <- p91_mixcr_trinity$jxns %>% 
-    select_top_jxns() %>% 
-    construct_tcrs()
 ```
+>>> Alignments with V gene:
+
+TRBV11-1*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+TRBV7-9*00 (total score = 160.0)
+Alignment of Sequence0 (score = 160.0):
+    255 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 286
+        ||||||||||||||||||||||||||||||||
+      0 GACTCGGCCATGTATCTCTGTGCCAGCAGCTT 31
+        BBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFF
+```
+
+---
+
+## Investigating discrepancies with MiXCR
+#### New idea: MiXCR with Trinity?
+<br>
+
++ Came up in discussions with Mike, Scott, Peter
++ Input data for IMGT is actually assembled contigs produced by Trinity (not
+short reads)
++ With help from Mike, modified MiXCR code to run on Trinity outputs instead of
+trimmed FASTQs (wasn't too hard - MiXCR allows FASTA file input)
++ Compared new results
+
+
+
+
 
 --- 
 
-## How'd we do?
+## Developing a new approach for MiXCR
+#### MiXCR with Trinity reproduces IMGT results
+<br>
 
 
 
 
-<div id = 'chart4c017ea55c0f' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b555718323' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -917,7 +902,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c017ea55c0f",
+ "dom": "chart34b555718323",
 "width":    800,
 "height":    550,
 "data": {
@@ -928,7 +913,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c017ea55c0f" 
+"id": "chart34b555718323" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1071,12 +1056,14 @@ node.append("text")
 
 --- 
 
-## Checking all
+## Developing a new approach for MiXCR
+#### Not just \beta chain - results match for both TRAV and TRBV
+<br>
 
 
 
 
-<div id = 'chart4c01426fdd31' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b54fe86ab0' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1085,9 +1072,9 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c01426fdd31",
+ "dom": "chart34b54fe86ab0",
 "width":    800,
-"height":    550,
+"height":    500,
 "data": {
  "source": [ "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "lib8472", "lib8474", "lib8451", "lib8453", "lib8493", "lib8444", "lib8445", "lib8482", "lib8485", "lib8488", "lib8464", "lib8467", "lib8449", "lib8444", "lib8445", "lib8449", "lib8451", "lib8453", "lib8464", "lib8467", "lib8472", "lib8474", "lib8482", "lib8485", "lib8488", "lib8493", "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1" ],
 "target": [ "TRAV25", "TRAV12-3", "TRAV25", "TRAV16", "TRAV8-4", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV26-1", "TRAV10", "TRAV25", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV26-2", "TRAV25", "TRAV16", "TRAV25", "TRAV26-2", "TRAV25", "TRAV12-3", "TRAV25", "TRAV26-1", "TRAV10", "TRAV8-4", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV20-1", "TRBV5-1", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV4-3", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV7-9", "TRBV4-3", "TRBV20-1", "TRBV4-3", "TRBV7-9", "TRBV4-3", "TRBV7-2", "TRBV4-3", "TRBV18", "TRBV25-1", "TRBV5-1", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAVYGGATNKLIF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CALLKGSGAGSYQLTF", "CAGQTGANNLFF", "CILRDTISNFGNEKLTF", "CAGQTGANNLFF", "CAMSRILTGGGNKLTF", "CAGQTGANNLFF", "CIVRVGESGGGADGLTF", "CVVSDRGSTLGRLYF", "CAVYGGATNKLIF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSLDPGPNEQFF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CSAPRGASGGSSYNEQFF", "CASSQEVGTVPNQPQHF", "CASSFGSSYYGYTF", "CASSQEVGTVPNQPQHF", "CASSFPSSPLHF", "CASSQEVGTVPNQPQHF", "CASSRIQGAQGYTF", "CASSEPLAGVNNEQFF", "CASSLDPGPNEQFF" ],
@@ -1096,7 +1083,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c01426fdd31" 
+"id": "chart34b54fe86ab0" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1239,18 +1226,23 @@ node.append("text")
 
 ---
 
-## Case 3: P48
+## Insights & advice from the MiLabratory
+#### Following up with the developers of MiXCR
+
+----
+
+## Investigating discrepancies with MiXCR
+#### Revisiting read length in MiXCR clonotype identification
+<br>
+
++ Bulk libraries from project P48
 
 
-```
-Warning: 4 problems parsing 'data/P91/P48_compiled_mixcr_output.txt'. See
-problems(...) for more details.
-```
 
 
 
 
-<div id = 'chart4c0140d63ec3' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b574381776' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1259,7 +1251,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c0140d63ec3",
+ "dom": "chart34b574381776",
 "width":    800,
 "height":    550,
 "data": {
@@ -1270,7 +1262,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c0140d63ec3" 
+"id": "chart34b574381776" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1429,7 +1421,7 @@ node.append("text")
     height: 550px;
   }  
   </style>
-<div id = 'chart4c011628f039' class = 'rChart d3_sankey'></div>
+<div id = 'chart34b5107a01c1' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1438,7 +1430,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart4c011628f039",
+ "dom": "chart34b5107a01c1",
 "width":    800,
 "height":    550,
 "data": {
@@ -1449,7 +1441,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart4c011628f039" 
+"id": "chart34b5107a01c1" 
 };
 
 params.units ? units = " " + params.units : units = "";
