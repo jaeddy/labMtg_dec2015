@@ -12,195 +12,198 @@ knit        : slidify::knit2slides
 ---
 
 
+<!-- Limit image width and height -->
+<style type="text/css">
+img {     
+  max-height: 500px;     
+  max-width: 800px; 
+}
+</style>
+ 
+<!-- Center image on slide -->
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script type="text/javascript">
+$(function() {     
+  $("p:has(img)").addClass('centered'); 
+});
+</script>
 
+<!-- Fix markdown emphasis -->
+<style>
+strong {
+  font-weight: bold;
+}
+</style>
+
+
+
+---  
 
 ## From single cells to clonotypes
+#### TCR-sequencing at BRI
+<br>
 
-Some words and stuff!
+![tcrseq](images/tcrseq.png) 
 
-<div style='text-align: center;'>
-    <img height='400' src='images/tcrseq.png' />
-</div>
+---  
+
+## TCR-seq workflow
+#### RNA-seq processing for clonotype identification 
+<br>
+
+![imgt_workflow](images/imgt_workflow.png)
+
+---  
+
+## MiXCR for clonotype identification & quantification
+#### Avoiding the IMGT bottleneck
+<br>
+
+> * Very fast, accurate alignment of reads to CDR3 (and other T-, B-cell 
+features)  
+> * Runs locally, without need for **Trinity** transcriptome assembly
+> * Found, implemented, & tested by Mike Mason
+> * Produced very similar results to IMGT V-QUEST in initial testing (later,
+we encountered some discrepancies related to input data)
+
+---  
+
+## Plugging in MiXCR
+#### Improving pipeline performance & reliability
+<br>
+
+![mixcr_workflow](images/mixcr_workflow.png)
+
+---  
+
+## Investigating discrepancies with MiXCR
+#### Variation in MiXCR output & overlap with IMGT
+<br>
+
+> * Looking at MiXCR results from different projects, Peter observed dropoff
+in number of functional junctions identified
+> * By extension, more recent projects also showed worse overlap with IMGT
+> * Overlap in these cases appears highly dependent on cutoff used for
+`clone count` metric
+> * For some of the problematic projects, MiXCR was run by me instead of Mike
+> * Projects were also processed in Galaxy at different times
+
+---  
+
+## Taking a closer look at P85
+#### Exploring MiXCR results with MAIT cells
+<br>
+
+![mixcr_diff](images/mixcr_diff.png)
+
+---  
 
 
---- .class #id 
-
-
-## Case 1: P85 MAIT
-
---- 
-
-## Reading & formatting MiXCR outputs
-
-
-
-
+## Working with clonotype data in `R`
+#### Combining MiXCR outputs
 
 
 ```r
-# Read, format, and filter MiXCR junctions
-mixcr <- format_mixcr_jxns(mixcr_file) %>% 
-    filter_mixcr_jxns() %>% 
-    list(jxns = .)
+source("R/prep_junctions.R")
 ```
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:right;"> cln_count </th>
-   <th style="text-align:left;"> v_gene </th>
-   <th style="text-align:right;"> v_gene_score </th>
-   <th style="text-align:left;"> j_gene </th>
-   <th style="text-align:right;"> j_gene_score </th>
-   <th style="text-align:left;"> junction </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib3635 </td>
-   <td style="text-align:right;"> 2 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:right;"> 67 </td>
-   <td style="text-align:left;"> TRAJ19 </td>
-   <td style="text-align:right;"> 55 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3636 </td>
-   <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> TRAV24 </td>
-   <td style="text-align:right;"> 80 </td>
-   <td style="text-align:left;"> TRAJ7 </td>
-   <td style="text-align:right;"> 41 </td>
-   <td style="text-align:left;"> CAFIFRIWSKELYSNF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3636 </td>
-   <td style="text-align:right;"> 3 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:right;"> 44 </td>
-   <td style="text-align:left;"> TRAJ19 </td>
-   <td style="text-align:right;"> 36 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3636 </td>
-   <td style="text-align:right;"> 1 </td>
-   <td style="text-align:left;"> TRBV19 </td>
-   <td style="text-align:right;"> 74 </td>
-   <td style="text-align:left;"> TRAJ51 </td>
-   <td style="text-align:right;"> 50 </td>
-   <td style="text-align:left;"> CGQLYLKPLSDFPV </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3637 </td>
-   <td style="text-align:right;"> 190 </td>
-   <td style="text-align:left;"> TRBV6-1 </td>
-   <td style="text-align:right;"> 164 </td>
-   <td style="text-align:left;"> TRBJ2-7 </td>
-   <td style="text-align:right;"> 133 </td>
-   <td style="text-align:left;"> CASSEGDSGGYEQYF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3637 </td>
-   <td style="text-align:right;"> 5 </td>
-   <td style="text-align:left;"> TRAV8-7 </td>
-   <td style="text-align:right;"> 40 </td>
-   <td style="text-align:left;"> TRAJ19 </td>
-   <td style="text-align:right;"> 33 </td>
-   <td style="text-align:left;"> CAGADRLQTGMRGAF </td>
-  </tr>
-</tbody>
-</table>
+
+```r
+mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_MM"
+project <- "P85"
+out_folder <- mixcr_folder
+
+# combine MiXCR junctions into a single file
+mixcr_file <- combine_mixcr_outputs(mixcr_folder, out_folder, project)
+```
+
+---
+
+## Working with clonotype data in `R`
+#### Reading & formatting MiXCR outputs
+
+
+```r
+mixcr <- format_mixcr_jxns(mixcr_file) %>% # read, format junctions
+    filter_mixcr_jxns() %>% # remove non-functional, aa length < 7
+    list(jxns = .) # store in list object
+```
+
+`mixcr$jxns`
+
+|lib_id  | cln_count|v_gene  | v_gene_score|j_gene  | j_gene_score|junction         |
+|:-------|---------:|:-------|------------:|:-------|------------:|:----------------|
+|lib3635 |         2|TRAV8-7 |           67|TRAJ19  |           55|CAGADRLQTGMRGAF  |
+|lib3636 |         8|TRAV24  |           80|TRAJ7   |           41|CAFIFRIWSKELYSNF |
+|lib3636 |         3|TRAV8-7 |           44|TRAJ19  |           36|CAGADRLQTGMRGAF  |
+|lib3636 |         1|TRBV19  |           74|TRAJ51  |           50|CGQLYLKPLSDFPV   |
+|lib3637 |       190|TRBV6-1 |          164|TRBJ2-7 |          133|CASSEGDSGGYEQYF  |
 
 --- 
 
-## Inspecting MiXCR junctions
+## Working with clonotype data in `R`
+#### Visually inspecting MiXCR junction data
+<br>
 
 ![plot of chunk unnamed-chunk-5](assets/fig/unnamed-chunk-5-1.png) 
 
 --- 
 
-## Reading & formatting IMGT outputs
+## Working with clonotype data in `R`
+#### Reading & formatting IMGT outputs
 
 
 ```r
-# Read and filter IMGT junctions
 imgt_file <- "data/P85/P85_MAIT/complied_P85_Prilic_1_and_2_productive_trimmed_unique.txt"
 
-imgt <- format_imgt_jxns(imgt_file) %>% 
-    filter_imgt_jxns() %>% 
-    filter(!str_detect(lib_id, "lib2.*")) %>% 
-    list(jxns = .)
+imgt <- format_imgt_jxns(imgt_file) %>% # read and filter IMGT junctions
+    filter_imgt_jxns() %>% # remove non-functional, aa length < 7
+    filter(!str_detect(lib_id, "lib2.*")) %>% # remove older samples
+    list(jxns = .) # store in list object
 ```
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> lib_id </th>
-   <th style="text-align:left;"> v_gene </th>
-   <th style="text-align:left;"> j_gene </th>
-   <th style="text-align:left;"> junction </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> lib3637 </td>
-   <td style="text-align:left;"> TRBV6-1 </td>
-   <td style="text-align:left;"> TRBJ2-7 </td>
-   <td style="text-align:left;"> CASSEGDSGGYEQYF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3638 </td>
-   <td style="text-align:left;"> TRBV20-1 </td>
-   <td style="text-align:left;"> TRBJ2-5 </td>
-   <td style="text-align:left;"> CSAPTGDSETQYF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3639 </td>
-   <td style="text-align:left;"> TRAV4 </td>
-   <td style="text-align:left;"> TRAJ10 </td>
-   <td style="text-align:left;"> CLVGVFTGGGNKLTF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3642 </td>
-   <td style="text-align:left;"> TRAV1-2 </td>
-   <td style="text-align:left;"> TRAJ33 </td>
-   <td style="text-align:left;"> CAVMDSNYQLIW </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3642 </td>
-   <td style="text-align:left;"> TRBV6-4 </td>
-   <td style="text-align:left;"> TRBJ2-3 </td>
-   <td style="text-align:left;"> CASSPAGGTDTQYF </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> lib3644 </td>
-   <td style="text-align:left;"> TRBV6-1 </td>
-   <td style="text-align:left;"> TRBJ1-1 </td>
-   <td style="text-align:left;"> CASSDDPGSSTEAFF </td>
-  </tr>
-</tbody>
-</table>
+`imgt$jxns`
+
+|lib_id  |v_gene   |j_gene  |junction        |
+|:-------|:--------|:-------|:---------------|
+|lib3637 |TRBV6-1  |TRBJ2-7 |CASSEGDSGGYEQYF |
+|lib3638 |TRBV20-1 |TRBJ2-5 |CSAPTGDSETQYF   |
+|lib3639 |TRAV4    |TRAJ10  |CLVGVFTGGGNKLTF |
+|lib3642 |TRAV1-2  |TRAJ33  |CAVMDSNYQLIW    |
+|lib3642 |TRBV6-4  |TRBJ2-3 |CASSPAGGTDTQYF  |
 
 --- 
 
-## Comparing IMGT & MiXCR
+## Working with clonotype data in `R`
+#### Inspecting IMGT & MiXCR junction overlap
+<br>
 
-![plot of chunk unnamed-chunk-8](assets/fig/unnamed-chunk-8-1.png) 
-
---- 
-
-## Checking for user variability
-
-![plot of chunk unnamed-chunk-9](assets/fig/unnamed-chunk-9-1.png) 
+<img src="assets/fig/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 --- 
 
-## Investigating the effect of RNA-seq parameters
+## Investigating discrepancies with MiXCR
+#### Checking for user variability with P85
+<br>
 
-Bonus function: `compile_imgt_output()`
+<img src="assets/fig/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+
+--- 
+
+## Investigating discrepancies with MiXCR
+#### Checking the effect of RNA-seq parameters
+<br>
+
++ **Read trimming:** adapter trimming, 3' end trimming, quality trimming  
++ **Duplicate removal:** yes or no
++ **Read length:** 100bp (long) vs. 58bp (short)
+
+**Testing:** used RNA-seq data from [INSERT_FLOWCELL_HERE]: 100bp reads
+
++ selected 20 samples  
++ manually simulated shorter reads for same set of samples  
++ varied other parameters  
++ ran both MiXCR & IMGT (bonus function: `compile_imgt_output()`)  
 
 
 
@@ -208,13 +211,17 @@ Bonus function: `compile_imgt_output()`
 
 --- 
 
-## Plotting the results
+## Investigating discrepancies with MiXCR
+#### Checking the effect of RNA-seq parameters
+<br>
 
-![plot of chunk unnamed-chunk-12](assets/fig/unnamed-chunk-12-1.png) 
+<img src="assets/fig/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 
 ---
 
 ## Case 2: P91
+
+![p91_circos](images/circos.png)
 
 ---
 
@@ -384,7 +391,7 @@ imgt_mixcr[["plot"]] <-
 ## Sankey again...
 
 
-<div id = 'chart3f9d71626512' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c0169277a27' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -393,7 +400,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9d71626512",
+ "dom": "chart4c0169277a27",
 "width":    800,
 "height":    550,
 "data": {
@@ -404,7 +411,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9d71626512" 
+"id": "chart4c0169277a27" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -552,7 +559,7 @@ node.append("text")
 
  
 
-<div id = 'chart3f9ddda43d9' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c0169de3f1c' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -561,7 +568,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9ddda43d9",
+ "dom": "chart4c0169de3f1c",
 "width":    800,
 "height":    550,
 "data": {
@@ -572,7 +579,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9ddda43d9" 
+"id": "chart4c0169de3f1c" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -720,7 +727,7 @@ node.append("text")
 
 
 
-<div id = 'chart3f9d4e2fe295' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c017ccce8c5' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -729,7 +736,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9d4e2fe295",
+ "dom": "chart4c017ccce8c5",
 "width":    800,
 "height":    550,
 "data": {
@@ -740,7 +747,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9d4e2fe295" 
+"id": "chart4c017ccce8c5" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -901,7 +908,7 @@ p91_mixcr_trinity[["tcrs"]] <- p91_mixcr_trinity$jxns %>%
 
 
 
-<div id = 'chart3f9db766176' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c017ea55c0f' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -910,7 +917,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9db766176",
+ "dom": "chart4c017ea55c0f",
 "width":    800,
 "height":    550,
 "data": {
@@ -921,7 +928,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9db766176" 
+"id": "chart4c017ea55c0f" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1069,7 +1076,7 @@ node.append("text")
 
 
 
-<div id = 'chart3f9d34d720d8' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c01426fdd31' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1078,7 +1085,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9d34d720d8",
+ "dom": "chart4c01426fdd31",
 "width":    800,
 "height":    550,
 "data": {
@@ -1089,7 +1096,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9d34d720d8" 
+"id": "chart4c01426fdd31" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1235,11 +1242,15 @@ node.append("text")
 ## Case 3: P48
 
 
+```
+Warning: 4 problems parsing 'data/P91/P48_compiled_mixcr_output.txt'. See
+problems(...) for more details.
+```
 
 
 
 
-<div id = 'chart3f9d1c9bb8c' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c0140d63ec3' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1248,7 +1259,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9d1c9bb8c",
+ "dom": "chart4c0140d63ec3",
 "width":    800,
 "height":    550,
 "data": {
@@ -1259,7 +1270,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9d1c9bb8c" 
+"id": "chart4c0140d63ec3" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1418,7 +1429,7 @@ node.append("text")
     height: 550px;
   }  
   </style>
-<div id = 'chart3f9d206fe729' class = 'rChart d3_sankey'></div>
+<div id = 'chart4c011628f039' class = 'rChart d3_sankey'></div>
 <!--Attribution:
 Mike Bostock https://github.com/d3/d3-plugins/tree/master/sankey
 Mike Bostock http://bost.ocks.org/mike/sankey/
@@ -1427,7 +1438,7 @@ Mike Bostock http://bost.ocks.org/mike/sankey/
 <script>
 (function(){
 var params = {
- "dom": "chart3f9d206fe729",
+ "dom": "chart4c011628f039",
 "width":    800,
 "height":    550,
 "data": {
@@ -1438,7 +1449,7 @@ var params = {
 "nodeWidth":     15,
 "nodePadding":     10,
 "layout":     32,
-"id": "chart3f9d206fe729" 
+"id": "chart4c011628f039" 
 };
 
 params.units ? units = " " + params.units : units = "";
@@ -1578,3 +1589,15 @@ node.append("text")
   }
 })();
 </script>
+
+--- 
+
+## Remaining questions
+
+--- 
+
+## VDJtools
+
+--- 
+
+## Acknowledgements 

@@ -12,6 +12,29 @@ knit        : slidify::knit2slides
 ---
 `r opts_chunk$set(echo=FALSE, message=FALSE, comment="")`
 
+<!-- Limit image width and height -->
+<style type="text/css">
+img {     
+  max-height: 500px;     
+  max-width: 800px; 
+}
+</style>
+ 
+<!-- Center image on slide -->
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script type="text/javascript">
+$(function() {     
+  $("p:has(img)").addClass('centered'); 
+});
+</script>
+
+<!-- Fix markdown emphasis -->
+<style>
+strong {
+  font-weight: bold;
+}
+</style>
+
 ```{r load_libs, cache=FALSE}
 library(knitr)
 library(readr)
@@ -24,54 +47,107 @@ library(tidyr)
 library(rCharts)
 ```
 
+---  
+
 ## From single cells to clonotypes
+#### TCR-sequencing at BRI
+<br>
 
-Some words and stuff!
+![tcrseq](images/tcrseq.png) 
 
-<div style='text-align: center;'>
-    <img height='400' src='images/tcrseq.png' />
-</div>
+---  
 
+## TCR-seq workflow
+#### RNA-seq processing for clonotype identification 
+<br>
 
---- .class #id 
+![imgt_workflow](images/imgt_workflow.png)
+
+---  
+
+## MiXCR for clonotype identification & quantification
+#### Avoiding the IMGT bottleneck
+<br>
+
+> * Very fast, accurate alignment of reads to CDR3 (and other T-, B-cell 
+features)  
+> * Runs locally, without need for **Trinity** transcriptome assembly
+> * Found, implemented, & tested by Mike Mason
+> * Produced very similar results to IMGT V-QUEST in initial testing (later,
+we encountered some discrepancies related to input data)
+
+---  
+
+## Plugging in MiXCR
+#### Improving pipeline performance & reliability
+<br>
+
+![mixcr_workflow](images/mixcr_workflow.png)
+
+---  
+
+## Investigating discrepancies with MiXCR
+#### Variation in MiXCR output & overlap with IMGT
+<br>
+
+> * Looking at MiXCR results from different projects, Peter observed dropoff
+in number of functional junctions identified
+> * By extension, more recent projects also showed worse overlap with IMGT
+> * Overlap in these cases appears highly dependent on cutoff used for
+`clone count` metric
+> * For some of the problematic projects, MiXCR was run by me instead of Mike
+> * Projects were also processed in Galaxy at different times
+
+---  
+
+## Taking a closer look at P85
+#### Exploring MiXCR results with MAIT cells
+<br>
+
+![mixcr_diff](images/mixcr_diff.png)
+
+---  
 `r opts_knit$set(root.dir = "/Users/jaeddy/code/github/projects/tcrSeqAnalysis/")`
 
-## Case 1: P85 MAIT
+## Working with clonotype data in `R`
+#### Combining MiXCR outputs
 
---- 
-
-## Reading & formatting MiXCR outputs
-
-```{r, cache=FALSE}
+```{r, echo=TRUE, cache=FALSE}
 source("R/prep_junctions.R")
 ```
 
-```{r}
-mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_MM/"
+```{r, echo=TRUE}
+mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_MM"
 project <- "P85"
 out_folder <- mixcr_folder
 
-# Combine MiXCR junctions into a single file
+# combine MiXCR junctions into a single file
 mixcr_file <- combine_mixcr_outputs(mixcr_folder, out_folder, project)
 ```
 
+---
+
+## Working with clonotype data in `R`
+#### Reading & formatting MiXCR outputs
+
 ```{r echo=TRUE}
-# Read, format, and filter MiXCR junctions
-mixcr <- format_mixcr_jxns(mixcr_file) %>% 
-    filter_mixcr_jxns() %>% 
-    list(jxns = .)
+mixcr <- format_mixcr_jxns(mixcr_file) %>% # read, format junctions
+    filter_mixcr_jxns() %>% # remove non-functional, aa length < 7
+    list(jxns = .) # store in list object
 ```
 
+`mixcr$jxns`
 ```{r}
-head(mixcr$jxns) %>% 
-    kable(format = "html")
+head(mixcr$jxns, 5) %>% kable()
 ```
 
 --- 
 
-## Inspecting MiXCR junctions
+## Working with clonotype data in `R`
+#### Visually inspecting MiXCR junction data
+<br>
 
-```{r, cache=FALSE}
+```{r, cache=FALSE, fig.width=10, fig.height=6}
 source("R/plot_junction_stats.R")
 p1 <- plot_mixcr_jxn_dist(mixcr$jxns, cutoff_line = 20)
 p2 <- plot_mixcr_summary(mixcr$jxns)
@@ -80,28 +156,30 @@ plot_grid(p1, p2, nrow = 2)
 
 --- 
 
-## Reading & formatting IMGT outputs
+## Working with clonotype data in `R`
+#### Reading & formatting IMGT outputs
 
 ```{r echo=TRUE}
-# Read and filter IMGT junctions
 imgt_file <- "data/P85/P85_MAIT/complied_P85_Prilic_1_and_2_productive_trimmed_unique.txt"
 
-imgt <- format_imgt_jxns(imgt_file) %>% 
-    filter_imgt_jxns() %>% 
-    filter(!str_detect(lib_id, "lib2.*")) %>% 
-    list(jxns = .)
+imgt <- format_imgt_jxns(imgt_file) %>% # read and filter IMGT junctions
+    filter_imgt_jxns() %>% # remove non-functional, aa length < 7
+    filter(!str_detect(lib_id, "lib2.*")) %>% # remove older samples
+    list(jxns = .) # store in list object
 ```
 
+`imgt$jxns`
 ```{r}
-head(imgt$jxns) %>% 
-    kable(format = "html")
+head(imgt$jxns, 5) %>% kable()
 ```
 
 --- 
 
-## Comparing IMGT & MiXCR
+## Working with clonotype data in `R`
+#### Inspecting IMGT & MiXCR junction overlap
+<br>
 
-```{r}
+```{r, fig.align='center', fig.width=10, fig.height=6}
 p1 <- compare_jxn_dists(imgt$jxns, mixcr$jxns) %>% 
     plot_jxn_comp()
 p1
@@ -109,9 +187,11 @@ p1
 
 --- 
 
-## Checking for user variability
+## Investigating discrepancies with MiXCR
+#### Checking for user variability with P85
+<br>
 
-```{r}
+```{r, fig.align='center', fig.width=12, fig.height=6, warning=FALSE}
 mixcr_folder <- "data/P85/P85_MAIT/mixcrOutput_JE"
 project <- "P85"
 out_folder <- mixcr_folder
@@ -131,9 +211,20 @@ plot_grid(p1, p2, labels = c("Processing & MiXCR execution by Mike",
 
 --- 
 
-## Investigating the effect of RNA-seq parameters
+## Investigating discrepancies with MiXCR
+#### Checking the effect of RNA-seq parameters
+<br>
 
-Bonus function: `compile_imgt_output()`
++ **Read trimming:** adapter trimming, 3' end trimming, quality trimming  
++ **Duplicate removal:** yes or no
++ **Read length:** 100bp (long) vs. 58bp (short)
+
+**Testing:** used RNA-seq data from [INSERT_FLOWCELL_HERE]: 100bp reads
+
++ selected 20 samples  
++ manually simulated shorter reads for same set of samples  
++ varied other parameters  
++ ran both MiXCR & IMGT (bonus function: `compile_imgt_output()`)  
 
 ```{r}
 project <- "P85"
@@ -213,9 +304,11 @@ p85_58_mixcr_dups <-
 
 --- 
 
-## Plotting the results
+## Investigating discrepancies with MiXCR
+#### Checking the effect of RNA-seq parameters
+<br>
 
-```{r}
+```{r, fig.align='center', fig.width=12, fig.height=7}
 p1 <- compare_jxn_dists(p85_100_imgt$jxns, p85_100_mixcr$jxns) %>% 
     plot_jxn_comp()
 p2 <- compare_jxn_dists(p85_100_imgt$jxns, p85_100_mixcr_dups$jxns) %>% 
@@ -235,6 +328,8 @@ plot_grid(p1, p2, p3, p4,
 ---
 
 ## Case 2: P91
+
+![p91_circos](images/circos.png)
 
 ---
 
@@ -514,3 +609,15 @@ mixcr_mixcr_trinity[["plot"]] <-
 ```{r results='asis', comment=NA, tidy=FALSE, cache=FALSE}
 mixcr_mixcr_trinity$plot$show('inline', cdn = TRUE, include_assets = TRUE)
 ```
+
+--- 
+
+## Remaining questions
+
+--- 
+
+## VDJtools
+
+--- 
+
+## Acknowledgements 
